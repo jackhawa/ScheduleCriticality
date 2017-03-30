@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA  } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { ChartModule } from 'angular2-highcharts';
@@ -9,6 +9,7 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { ActivityDialogModule } from './activityDialog.module';
 import { ProcessDialogModule } from '../processDialog/processDialog.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { HighchartsFactory } from './highChartsFactory';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     BrowserModule,
     FormsModule,
     HttpModule,
-    ChartModule,
+    ChartModule.forRoot(HighchartsFactory),
     MaterialModule.forRoot(),
     NgxDatatableModule,
     ActivityDialogModule,
@@ -27,8 +28,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
   ],
   providers: [],
   bootstrap: [AppComponent],
-  schemas: [ 
-    CUSTOM_ELEMENTS_SCHEMA 
+  schemas: [
+    CUSTOM_ELEMENTS_SCHEMA
   ],
 })
 export class AppModule { }

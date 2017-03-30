@@ -16,9 +16,9 @@ services:
       - sqlinux
     ports:
       - 5000:5000
-#  web:
-#    image: ang2:1.1
-#    build:
-#     context: ./web
-#    ports:
-#      - 4200:4200
+  web:
+    image: ang2:1.1
+    build:
+     context: ./web
+    ports:
+      - 4200:4200
