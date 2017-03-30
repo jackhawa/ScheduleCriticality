@@ -1,0 +1,59 @@
+<div class="cep-form">
+    <span>{{dialogName}} Activity</span>
+    <form #formCtrl="ngForm">
+        <md-input-container>
+            <input mdInput placeholder="Name" [ngModel]="name" (ngModelChange)="name = $event" required name="name">
+        </md-input-container>
+        <md-input-container>
+            <input mdInput placeholder="Units" [(ngModel)]="units" required name="units">
+        </md-input-container>
+        <md-slide-toggle [ngModel]="inputProdRate" (ngModelChange)="inputProdRate = $event" required name="inputProdRate">Input Productive Rates</md-slide-toggle>
+        <md-input-container *ngIf="inputProdRate === true">
+            <input mdInput placeholder="Safe Productivity Rate" [ngModel]="safeProductivityRate" (ngModelChange)="safeProductivityRate = $event"
+                required name="safeProductivityRate">
+        </md-input-container>
+        <md-input-container *ngIf="inputProdRate === true">
+            <input mdInput placeholder="Aggressive Productivity Rate" [ngModel]="aggressiveProductivityRate" name="aggressiveProductivityRate"
+                (ngModelChange)="aggressiveProductivityRate = $event" required>
+        </md-input-container>
+        <md-input-container *ngIf="inputProdRate === false">
+            <input mdInput placeholder="Safe Duration" [ngModel]="duration" (ngModelChange)="duration = $event"
+                required name="duration">
+        </md-input-container>
+        <md-input-container *ngIf="inputProdRate === false">
+            <input mdInput placeholder="Aggressive Duration" [ngModel]="aggressiveDuration" name="aggressiveDuration"
+                (ngModelChange)="aggressiveDuration = $event" required>
+        </md-input-container>
+        <md-input-container>
+            <input mdInput placeholder="Start To Finish" [ngModel]="startToFinish" (ngModelChange)="startToFinish = $event" required
+                name="startToFinish">
+        </md-input-container>
+        <md-input-container>
+            <input mdInput placeholder="Unit Delta" [ngModel]="unitDelta" (ngModelChange)="unitDelta = $event" required name="unitDelta">
+        </md-input-container>
+        <md-select placeholder="Process" [(ngModel)]="processSelected" name="processSelected" (ngModelChange)="processSelected = $event">
+            <md-option *ngFor="let p of processes" [value]="p.key">
+                {{p.value}}
+            </md-option>
+        </md-select>
+        <md-select placeholder="Duration Function" [(ngModel)]="durationFunction" name="durationFunction" required>
+            <md-option *ngFor="let vf of durationFunctions" [value]="vf.key">
+                {{vf.value}}
+            </md-option>
+        </md-select>
+        <md-select placeholder="Activity" [(ngModel)]="activitySelected[0]" name="activitySelected[0]" required>
+            <md-option *ngFor="let act of activities" [value]="act.key">
+                {{act.value}}
+            </md-option>
+        </md-select>
+        <md-select *ngIf="durationFunction === 0" placeholder="Activity" [(ngModel)]="activitySelected[1]" name="activitySelected[1]">
+            <md-option *ngFor="let act of activities" [value]="act.key">
+                {{act.value}}
+            </md-option>
+        </md-select>
+        <section>
+            <button type="submit" md-raised-button (click)="dialogRef.close(this)" [disabled]="!formCtrl.form.valid">Save</button>
+            <button type="button" md-button (click)="dialogRef.close()">Cancel</button>
+        </section>
+    </form>
+</div>

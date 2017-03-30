@@ -1,0 +1,176 @@
+<md-toolbar>Linear-Based Schedule estimation</md-toolbar>
+<md-tab-group>
+  <md-tab label="Upward Activities">
+    <md-toolbar class="button-toolbar">
+      <button (click)="executeActivity(null, 'UPWARD')" md-raised-button>Add Activity</button>
+      <button [disabled]="!selectedActivity" (click)="executeActivity(selectedActivity, 'UPWARD')" md-raised-button>Update Activity</button>
+      <button [disabled]="!selectedActivity" (click)="deleteActivity(selectedActivity)" md-raised-button>Delete Activity</button>
+    </md-toolbar>
+    <ngx-datatable class="material" [rows]="activities" [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'" [selected]="selectedRowActivity"
+      [selectionType]="'single'" [columnMode]="'force'" (select)='onSelect($event)'>
+      <ngx-datatable-column name="Name">
+        <template ngx-datatable-cell-template let-value="value">
+          {{value}}
+        </template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Units">
+        <template ngx-datatable-cell-template let-value="value">
+          {{value}}
+        </template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Duration">
+        <template ngx-datatable-cell-template let-value="value">
+          {{value}}
+        </template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Agg Duration" prop="aggressiveDuration">
+        <template ngx-datatable-cell-template let-value="value">
+          {{value}}
+        </template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Safe PR" prop="safeProductivityRate">
+        <template ngx-datatable-cell-template let-value="value">
+          {{value}}
+        </template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Agg PR" prop="aggressiveProductivityRate">
+        <template ngx-datatable-cell-template let-value="value">
+          {{value}}
+        </template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Finish/Start" prop="startToFinish">
+        <template ngx-datatable-cell-template let-value="value">
+          {{value}}
+        </template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Unit Delta" prop="unitDelta">
+        <template ngx-datatable-cell-template let-value="value">
+          {{value}}
+        </template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Function" prop="durationFunction">
+        <template ngx-datatable-cell-template let-value="value">
+          {{value}}
+        </template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Dependencies" prop="dependenciesStr">
+        <template ngx-datatable-cell-template let-value="value">
+          {{value}}
+        </template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Process" prop="processName">
+        <template ngx-datatable-cell-template let-value="value">
+          {{value}}
+        </template>
+      </ngx-datatable-column>
+    </ngx-datatable>
+    <md-progress-spinner *ngIf="!activities" mode="indeterminate"></md-progress-spinner>
+  </md-tab>
+  <md-tab label="Downward Activities">
+    <md-toolbar class="button-toolbar">
+      <button (click)="executeActivity(null, 'DOWNWARD')" md-raised-button>Add Activity</button>
+      <button [disabled]="!selectedDownwardActivity" (click)="executeActivity(selectedDownwardActivity,'DOWNWARD')" md-raised-button>Update Activity</button>
+      <button [disabled]="!selectedDownwardActivity" (click)="deleteActivity(selectedDownwardActivity)" md-raised-button>Delete Activity</button>
+    </md-toolbar>
+    <ngx-datatable class="material" [rows]="downwardActivities" [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
+      [selected]="selectedDownwardRowActivity" [selectionType]="'single'" [columnMode]="'force'" (select)='onDownwardSelect($event)'>
+      <ngx-datatable-column name="Name">
+        <template ngx-datatable-cell-template let-value="value">
+          {{value}}
+        </template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Units">
+        <template ngx-datatable-cell-template let-value="value">
+          {{value}}
+        </template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Duration">
+        <template ngx-datatable-cell-template let-value="value">
+          {{value}}
+        </template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Agg Duration" prop="aggressiveDuration">
+        <template ngx-datatable-cell-template let-value="value">
+          {{value}}
+        </template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Safe PR" prop="safeProductivityRate">
+        <template ngx-datatable-cell-template let-value="value">
+          {{value}}
+        </template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Agg PR" prop="aggressiveProductivityRate">
+        <template ngx-datatable-cell-template let-value="value">
+          {{value}}
+        </template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Finish/Start" prop="startToFinish">
+        <template ngx-datatable-cell-template let-value="value">
+          {{value}}
+        </template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Unit Delta" prop="unitDelta">
+        <template ngx-datatable-cell-template let-value="value">
+          {{value}}
+        </template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Function" prop="durationFunction">
+        <template ngx-datatable-cell-template let-value="value">
+          {{value}}
+        </template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Dependencies" prop="dependenciesStr">
+        <template ngx-datatable-cell-template let-value="value">
+          {{value}}
+        </template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Process" prop="processName">
+        <template ngx-datatable-cell-template let-value="value">
+          {{value}}
+        </template>
+      </ngx-datatable-column>
+    </ngx-datatable>
+    <md-progress-spinner *ngIf="!activities" mode="indeterminate"></md-progress-spinner>
+  </md-tab>
+  <md-tab label="Processes">
+    <md-toolbar class="button-toolbar">
+      <button (click)="executeProcess(null)" md-raised-button>Add Process</button>
+      <button [disabled]="!selectedProcess" (click)="executeProcess(selectedProcess)" md-raised-button>Update Process</button>
+      <button [disabled]="!selectedProcess" (click)="deleteProcess()" md-raised-button>Delete Process</button>
+    </md-toolbar>
+    <ngx-datatable class="material" [rows]="processes" [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'" [selected]="selectedRowProcess"
+      [selectionType]="'single'" [columnMode]="'force'" (select)='onProcessSelect($event)'>
+      <ngx-datatable-column name="Name">
+        <template ngx-datatable-cell-template let-value="value">
+          {{value}}
+        </template>
+      </ngx-datatable-column>
+    </ngx-datatable>
+    <md-progress-spinner *ngIf="!processes" mode="indeterminate"></md-progress-spinner>
+  </md-tab>
+  <md-tab label="Controlling Link">
+    <md-toolbar class="button-toolbar">
+      <button (click)="updateLink()" md-raised-button>Update</button>
+    </md-toolbar>
+    <div class="form-container">
+      <md-select placeholder="Upward Activity" [ngModel]="upwardActivity" (ngModelChange)="upwardActivity = $event" name="upwardActivity"
+        required>
+        <md-option *ngFor="let act of activities" [value]="act.id">{{ act.name }}</md-option>
+      </md-select>
+      <md-select placeholder="Downward Activity" [ngModel]="downwardActivity" (ngModelChange)="downwardActivity = $event" name="downwardActivity"
+      required>
+        <md-option *ngFor="let act of downwardActivities" [value]="act.id">{{ act.name }}</md-option>
+      </md-select>
+      <md-input-container>
+        <input md-input placeholder="Time Period" [ngModel]="timePeriod" (ngModelChange)="timePeriod = $event" name="timePeriod"
+          required>
+      </md-input-container>
+    </div>
+  </md-tab>
+  <md-tab label="Graph">
+    <md-toolbar class="button-toolbar">
+      <button (click)="getGraph(true)" md-raised-button>Add Critical Path</button>
+    </md-toolbar>
+    <chart [options]="graphConfig" style="height:500px; width:1200px;"></chart>
+  </md-tab>
+</md-tab-group>

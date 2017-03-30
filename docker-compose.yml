@@ -1,0 +1,24 @@
+version: '2'
+
+services:
+  sqlinux:
+    image: microsoft/mssql-server-linux
+    environment:
+      SA_PASSWORD: "Welcome1234!"
+      ACCEPT_EULA: "Y"
+    ports:
+    - 1433:1433
+  api:
+    image: aspnetcore:1.1
+    build:
+      context: ./api
+    depends_on:
+      - sqlinux
+    ports:
+      - 5000:5000
+#  web:
+#    image: ang2:1.1
+#    build:
+#     context: ./web
+#    ports:
+#      - 4200:4200

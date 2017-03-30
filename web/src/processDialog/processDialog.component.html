@@ -1,0 +1,10 @@
+<div class="cep-form">
+    <span>{{dialogName}} Process</span>
+    <md-input-container>
+        <input mdInput placeholder="Name" [ngModel]="name" (ngModelChange)="name = $event">
+    </md-input-container>
+    <section>
+        <button type="button" md-raised-button (click)="dialogRef.close(this)">Save</button>
+        <button type="button" md-button (click)="dialogRef.close()">Cancel</button>
+    </section>
+</div>
