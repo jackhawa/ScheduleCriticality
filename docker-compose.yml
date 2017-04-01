@@ -2,14 +2,11 @@ version: '2'
 
 services:
   sqlinux:
-    image: microsoft/mssql-server-linux
-    environment:
-      SA_PASSWORD: "Welcome1234!"
-      ACCEPT_EULA: "Y"
+    build:
+      context: ./db
     ports:
       - 1433:1433
   api:
-    image: schedule-criticality-api
     build:
       context: ./api
     depends_on:
@@ -17,7 +14,6 @@ services:
     ports:
       - 5000:5000
   web:
-    image: schedule-criticality-web
     build:
      context: ./web
     ports:
