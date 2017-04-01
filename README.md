@@ -1,4 +1,8 @@
-docker pull jackhawa/aspnetcore:1.1
+docker tag ang2:1.1 jackhawa/schedule-criticality:1.1
+docker push jackhawa/schedule-criticality:1.1
 
-docker pull jackhawa/ang2:1.1
-docker run -d --name ang2 -p 4200:4200 ang2:1.1
+Remove all containers
+docker rm $(docker ps -a -q)
+
+Remove all images
+docker rmi $(docker images -a -q) -f

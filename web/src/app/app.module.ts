@@ -9,7 +9,11 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { ActivityDialogModule } from './activityDialog.module';
 import { ProcessDialogModule } from '../processDialog/processDialog.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HighchartsFactory } from './highChartsFactory';
+import { HighchartsStatic } from 'angular2-highcharts/dist/HighchartsService';
+
+export function highchartsFactory() {
+  return require('highcharts');
+}
 
 @NgModule({
   declarations: [
@@ -19,14 +23,17 @@ import { HighchartsFactory } from './highChartsFactory';
     BrowserModule,
     FormsModule,
     HttpModule,
-    ChartModule.forRoot(HighchartsFactory),
+    ChartModule,
     MaterialModule.forRoot(),
     NgxDatatableModule,
     ActivityDialogModule,
     ProcessDialogModule,
     BrowserAnimationsModule
   ],
-  providers: [],
+  providers: [{
+      provide: HighchartsStatic,
+      useFactory: highchartsFactory
+    }],
   bootstrap: [AppComponent],
   schemas: [
     CUSTOM_ELEMENTS_SCHEMA

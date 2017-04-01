@@ -7,9 +7,9 @@ services:
       SA_PASSWORD: "Welcome1234!"
       ACCEPT_EULA: "Y"
     ports:
-    - 1433:1433
+      - 1433:1433
   api:
-    image: aspnetcore:1.1
+    image: schedule-criticality-api
     build:
       context: ./api
     depends_on:
@@ -17,7 +17,7 @@ services:
     ports:
       - 5000:5000
   web:
-    image: ang2:1.1
+    image: schedule-criticality-web
     build:
      context: ./web
     ports:
