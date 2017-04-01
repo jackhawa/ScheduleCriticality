@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using SchedulePath.Models;
 using SchedulePath.Services;
@@ -9,7 +8,7 @@ namespace SchedulePath.Controllers
     public class ActivityController : Controller
     {
         private IActivityService _service;
-
+        
         public ActivityController(IActivityService service)
         {
             _service = service;

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.Net;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -6,6 +8,8 @@ using Microsoft.Extensions.Logging;
 using SchedulePath.Models;
 using SchedulePath.Repository;
 using SchedulePath.Services;
+using System.Text;
+using Microsoft.Extensions.Logging;
 
 namespace SchedulePath
 {
@@ -13,9 +17,15 @@ namespace SchedulePath
     {
         private IConfigurationRoot _config;
         private IHostingEnvironment _env;
+        private ILoggerFactory _factory;
+        private ILogger _logger;
         public Startup(IHostingEnvironment env)
         {
             _env = env;
+            
+            _factory = new LoggerFactory();
+            _logger = _factory.CreateLogger("main");
+            _factory.AddFile("C:\\ScheduleCriticality\\logs\\log-{Date}.txt");
 
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
@@ -64,16 +74,35 @@ namespace SchedulePath
             loggerFactory.AddConsole(_config.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            app.UseApplicationInsightsRequestTelemetry();
-
-            app.UseApplicationInsightsExceptionTelemetry();
-
             app.UseCors(builder =>
             {
                 builder.WithOrigins("http://localhost:4200", "http://localhost:8080")
                        .WithMethods("GET", "POST", "PUT", "DELETE")
                        .AllowAnyHeader();
             });
+
+            app.UseExceptionHandler(
+                options =>
+                {
+                    options.Run(
+                        async context =>
+                        {
+                            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                            context.Response.ContentType = "text/html";
+                            var ex = context.Features.Get<IExceptionHandlerFeature>();
+                            if (ex != null)
+                            {
+                                byte[] data = Encoding.UTF8.GetBytes($"<h1>Error: {ex.Error.Message}</h1>{ex.Error.StackTrace}");
+
+                                _logger.LogInformation(ex.Error.Message);
+                                _logger.LogInformation(ex.Error.StackTrace);
+
+                                context.Response.ContentType = "application/json";
+                                await context.Response.Body.WriteAsync(data, 0, data.Length).ConfigureAwait(false);
+                            }
+                        });
+                }
+            );
 
             app.UseMvc();
         }

@@ -16,5 +16,8 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="1.1.0"/>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="*"/>
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="*"/>
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="1.1.1.0"/>
+    <PackageReference Include="Serilog.Extensions.Logging.File" Version="*"/>
+    <PackageReference Include="Microsoft.AspNet.Http" Version="*"/>
   </ItemGroup>
 </Project>
