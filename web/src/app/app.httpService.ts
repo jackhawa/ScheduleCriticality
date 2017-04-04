@@ -117,6 +117,7 @@ export class HttpService {
   }
   private handleError(error: Response) {
     console.error(error);
+    alert('Error occured');
     let msg = `Error status code ${error.status} at ${error.url}`;
     return Observable.throw(msg);
   }
