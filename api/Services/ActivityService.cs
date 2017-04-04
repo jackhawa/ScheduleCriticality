@@ -2,6 +2,7 @@
 using SchedulePath.Repository;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 namespace SchedulePath.Services
 {
@@ -44,6 +45,7 @@ namespace SchedulePath.Services
         
         public IEnumerable<Activity> GetActivities()
         {
+            throw new Exception("causing an error");
             var activities = _repository.GetActivities();
             activities.ToList().ForEach(item =>
 

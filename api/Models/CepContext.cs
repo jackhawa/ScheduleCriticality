@@ -19,7 +19,7 @@ namespace SchedulePath.Models
         {
             base.OnConfiguring(optionsBuilder);
 
-            optionsBuilder.UseSqlServer(_config["ConnectionStrings:CepContextConnection"]);
+            optionsBuilder.UseSqlServer(_config["Logging:ConnectionStrings:CepContextConnection"]);
         }
     }
 }

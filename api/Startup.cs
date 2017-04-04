@@ -9,7 +9,6 @@ using SchedulePath.Models;
 using SchedulePath.Repository;
 using SchedulePath.Services;
 using System.Text;
-using Microsoft.Extensions.Logging;
 
 namespace SchedulePath
 {
@@ -17,15 +16,11 @@ namespace SchedulePath
     {
         private IConfigurationRoot _config;
         private IHostingEnvironment _env;
-        private ILoggerFactory _factory;
-        private ILogger _logger;
+        private IMailManager _mailManager;
         public Startup(IHostingEnvironment env)
         {
             _env = env;
-            
-            _factory = new LoggerFactory();
-            _logger = _factory.CreateLogger("main");
-            _factory.AddFile("C:\\ScheduleCriticality\\logs\\log-{Date}.txt");
+            _mailManager = new MailManager();
 
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
@@ -92,10 +87,9 @@ namespace SchedulePath
                             var ex = context.Features.Get<IExceptionHandlerFeature>();
                             if (ex != null)
                             {
-                                byte[] data = Encoding.UTF8.GetBytes($"<h1>Error: {ex.Error.Message}</h1>{ex.Error.StackTrace}");
+                                byte[] data = Encoding.Unicode.GetBytes($"<h1>Error: {ex.Error.Message}</h1>{ex.Error.StackTrace}");
 
-                                _logger.LogInformation(ex.Error.Message);
-                                _logger.LogInformation(ex.Error.StackTrace);
+                                _mailManager.SendEmailAsync("jzh.softdev@gmail.com", ex.Error.Message, ex.Error.StackTrace);
 
                                 context.Response.ContentType = "application/json";
                                 await context.Response.Body.WriteAsync(data, 0, data.Length).ConfigureAwait(false);
