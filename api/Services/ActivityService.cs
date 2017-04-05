@@ -45,7 +45,6 @@ namespace SchedulePath.Services
         
         public IEnumerable<Activity> GetActivities()
         {
-            throw new Exception("causing an error");
             var activities = _repository.GetActivities();
             activities.ToList().ForEach(item =>
 

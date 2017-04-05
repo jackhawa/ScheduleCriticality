@@ -1,14 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using SchedulePath.Services;
 
 namespace SchedulePath.Models
 {
     public class CepContext: DbContext
     {
         private IConfigurationRoot _config;
-        public CepContext(IConfigurationRoot config, DbContextOptions options): base(options)
+        private ILoggingManager _logger;
+        public CepContext(IConfigurationRoot config, DbContextOptions options, ILoggingManager logger): base(options)
         {
             _config = config;
+            _logger = logger;
         }
 
         public DbSet<Process> Processes { get; set; }
@@ -20,6 +23,7 @@ namespace SchedulePath.Models
             base.OnConfiguring(optionsBuilder);
 
             optionsBuilder.UseSqlServer(_config["Logging:ConnectionStrings:CepContextConnection"]);
+            _logger.Log("CepContextConnection: " + _config["Logging:ConnectionStrings:CepContextConnection"]);
         }
     }
 }

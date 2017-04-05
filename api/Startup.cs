@@ -16,11 +16,10 @@ namespace SchedulePath
     {
         private IConfigurationRoot _config;
         private IHostingEnvironment _env;
-        private IMailManager _mailManager;
+
         public Startup(IHostingEnvironment env)
         {
             _env = env;
-            _mailManager = new MailManager();
 
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
@@ -61,14 +60,13 @@ namespace SchedulePath
             services.AddScoped<ILinkService, LinkService>();
             services.AddScoped<ILinkProcessor, LinkProcessor>();
             services.AddScoped<IGraphProcessor, GraphProcessor>();
+            services.AddScoped<ILoggingManager, LoggingManager>();
+            services.AddScoped<IMailManager, MailManager>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IMailManager mailManager)
         {
-            loggerFactory.AddConsole(_config.GetSection("Logging"));
-            loggerFactory.AddDebug();
-
             app.UseCors(builder =>
             {
                 builder.WithOrigins("http://localhost:4200", "http://localhost:8080")
@@ -89,7 +87,7 @@ namespace SchedulePath
                             {
                                 byte[] data = Encoding.Unicode.GetBytes($"<h1>Error: {ex.Error.Message}</h1>{ex.Error.StackTrace}");
 
-                                _mailManager.SendEmailAsync("jzh.softdev@gmail.com", ex.Error.Message, ex.Error.StackTrace);
+                                mailManager.SendEmailAsync("jzh.softdev@gmail.com", ex.Error.Message, ex.Error.StackTrace);
 
                                 context.Response.ContentType = "application/json";
                                 await context.Response.Body.WriteAsync(data, 0, data.Length).ConfigureAwait(false);
