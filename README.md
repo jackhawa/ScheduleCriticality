@@ -1,5 +1,5 @@
-docker tag ang2:1.1 jackhawa/schedule-criticality:1.1
-docker push jackhawa/schedule-criticality:1.1
+docker tag schedulecriticality_api jackhawa/schedulecriticality_api
+docker push jackhawa/schedulecriticality_api
 
 Stop all containers
 docker stop $(docker ps -a -q)

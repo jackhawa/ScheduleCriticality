@@ -9,6 +9,7 @@ using SchedulePath.Models;
 using SchedulePath.Repository;
 using SchedulePath.Services;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace SchedulePath
 {
@@ -69,7 +70,7 @@ namespace SchedulePath
         {
             app.UseCors(builder =>
             {
-                builder.WithOrigins("http://localhost:4200", "http://localhost:8080")
+                builder.WithOrigins("http://localhost:4200")
                        .WithMethods("GET", "POST", "PUT", "DELETE")
                        .AllowAnyHeader();
             });
@@ -80,17 +81,23 @@ namespace SchedulePath
                     options.Run(
                         async context =>
                         {
+                            context.Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:4200");
+                            context.Response.Headers.Add("Access-Control-Allow-Method", "*");
+                            context.Response.Headers.Add("Access-Control-Request-Headers", "*");
+
                             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                            context.Response.ContentType = "text/html";
+                            context.Response.ContentType = "application/json";
                             var ex = context.Features.Get<IExceptionHandlerFeature>();
                             if (ex != null)
                             {
-                                byte[] data = Encoding.Unicode.GetBytes($"<h1>Error: {ex.Error.Message}</h1>{ex.Error.StackTrace}");
-
                                 mailManager.SendEmailAsync("jzh.softdev@gmail.com", ex.Error.Message, ex.Error.StackTrace);
 
-                                context.Response.ContentType = "application/json";
-                                await context.Response.Body.WriteAsync(data, 0, data.Length).ConfigureAwait(false);
+                                var err = JsonConvert.SerializeObject(new Error()
+                                {
+                                    Stacktrace = ex.Error.StackTrace,
+                                    Message = ex.Error.Message
+                                });
+                                await context.Response.Body.WriteAsync(Encoding.ASCII.GetBytes(err), 0, err.Length).ConfigureAwait(false);
                             }
                         });
                 }
@@ -98,5 +105,11 @@ namespace SchedulePath
 
             app.UseMvc();
         }
+    }
+
+    public class Error
+    {
+        public string Message { get; set; }
+        public string Stacktrace { get; set; }
     }
 }

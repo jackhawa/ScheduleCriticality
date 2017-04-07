@@ -10,6 +10,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/toPromise';
 import 'rxjs/add/operator/do';
+import 'rxjs/add/observable/throw'
 
 export class Activity {
   constructor(public id: number,
@@ -116,9 +117,6 @@ export class HttpService {
       .catch(this.handleError);;
   }
   private handleError(error: Response) {
-    console.error(error);
-    alert('Error occured');
-    let msg = `Error status code ${error.status} at ${error.url}`;
-    return Observable.throw(msg);
+    return Observable.throw(error.json().Message);
   }
 }

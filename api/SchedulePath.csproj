@@ -18,5 +18,6 @@
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="*"/>
     <PackageReference Include="Microsoft.Extensions.Logging" Version="1.1.1.0"/>
     <PackageReference Include="MailKit" Version="1.12.0"/>
+    <PackageReference Include="Newtonsoft.Json" Version="*" />
   </ItemGroup>
 </Project>

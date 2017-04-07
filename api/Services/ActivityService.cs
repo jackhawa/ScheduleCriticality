@@ -109,6 +109,10 @@ namespace SchedulePath.Services
 
         public void DeleteActivity(int id)
         {
+            if(_repository.GetActivities().Any(a => a.ActivityDependencies.Any(d => d.Id == id)))
+            {
+                throw new Exception("Cannot delete activity. It is a dependency for another.");
+            }
             _repository.DeleteActivity(id);
         }
     }

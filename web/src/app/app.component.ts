@@ -1,10 +1,12 @@
 import { Component, ViewContainerRef } from '@angular/core';
-import { MdDialog } from '@angular/material';
+import { MdDialog, MdDialogConfig } from '@angular/material';
 import { Activity, Process, HttpService } from './app.httpService';
 import { ActivityDialogService } from './activityDialog.service';
 import { ProcessDialogService } from '../processDialog/processDialog.service';
 import { ActivityDialog } from './activityDialog.component';
 import { ProcessDialog } from '../processDialog/processDialog.component';
+import { MdDialogRef } from '@angular/material';
+import { ErrorDialog } from '../errorDialog/errorDialog.component';
 
 @Component({
     selector: 'app-root',
@@ -153,8 +155,15 @@ export class AppComponent {
                 this.activities = allActivities.filter(a => a.section === 'UPWARD');
                 this.downwardActivities = allActivities.filter(a => a.section === 'DOWNWARD');
             },
-            error => this.errorMessage = <any>error
-            );
+            error => {
+                alert(error);
+                /*
+                let dialogRef: MdDialogRef<ErrorDialog>;
+                let config = new MdDialogConfig();
+                config.viewContainerRef = this.viewContainerRef;
+                dialogRef = this.dialog.open(ErrorDialog, config);
+                dialogRef.componentInstance.errorMessage = error;*/
+            });
     }
 
     getProcesses() {
