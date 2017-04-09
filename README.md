@@ -1,6 +1,9 @@
 docker tag schedulecriticality_api jackhawa/schedulecriticality_api
 docker push jackhawa/schedulecriticality_api
 
+docker tag schedulecriticality_web jackhawa/schedulecriticality_web
+docker push jackhawa/schedulecriticality_web
+
 Stop all containers
 docker stop $(docker ps -a -q)
 
@@ -16,7 +19,7 @@ Run docker quick start terminal with piveleges
 
 docker-machine create --driver virtualbox --virtualbox-memory 4096 default
 
-docker-machine env default
+eval $(docker-machine env default)
 
 docker-machine start
 

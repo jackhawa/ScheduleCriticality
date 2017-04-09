@@ -99,7 +99,7 @@ export class AppComponent {
                         this.ngOnInit();
                     });
                 }
-            });
+            }, error => alert(error));
     }
 
     executeProcess(process: Process) {
@@ -125,17 +125,17 @@ export class AppComponent {
                         this.getGraph(false);
                     });
                 }
-            });
+            }, error => alert(error));
     }
 
     deleteActivity(selectedActivity) {
         this.httpService.deleteActivity(selectedActivity.id).
-            subscribe(() => this.ngOnInit());
+            subscribe(() => this.ngOnInit(), error => alert(error));
     }
 
     deleteProcess() {
         this.httpService.deleteProcess(this.selectedProcess.id).
-            subscribe(() => this.ngOnInit());
+            subscribe(() => this.ngOnInit(), error => alert(error));
     }
 
     getActivities() {
@@ -172,7 +172,7 @@ export class AppComponent {
             processes => {
                 this.processes = processes;
             },
-            error => this.errorMessage = <any>error
+            error => alert(error)
             );
     }
 
@@ -180,7 +180,7 @@ export class AppComponent {
         this.httpService.getGraph(withCriticalPath)
             .subscribe(
             graphConfig => this.graphConfig = graphConfig,
-            error => this.errorMessage = <any>error
+            error => alert(error)
             );
     }
 
@@ -192,7 +192,8 @@ export class AppComponent {
                     this.downwardActivity = link.downwardActivity;
                     this.timePeriod = link.timePeriod;
                 }
-            })
+            },
+            error => alert(error))
     }
 
     updateLink() {

@@ -49,7 +49,7 @@ export class HttpService {
     let headers = new Headers();
     headers.append('Content-Type', 'application/json');
     return this.http
-      .post('http://localhost:5000/api/activities/', JSON.stringify(activity), { headers: headers });
+      .post('http://localhost:5000/api/activities/', JSON.stringify(activity), { headers: headers }).catch(this.handleError);
   }
   getActivities() {
     return this.http
@@ -85,23 +85,26 @@ export class HttpService {
   deleteActivity(id) {
     return this.http
       .delete('http://localhost:5000/api/activities/' + id)
+      .catch(this.handleError);
   }
   deleteProcess(id) {
     return this.http
       .delete('http://localhost:5000/api/processes/' + id)
+      .catch(this.handleError);
   }
   addProcess(process) {
     let headers = new Headers();
     headers.append('Content-Type', 'application/json');
     return this.http
-      .post('http://localhost:5000/api/processes/', JSON.stringify(process), { headers: headers });
+      .post('http://localhost:5000/api/processes/', JSON.stringify(process), { headers: headers })
+      .catch(this.handleError);
   }
   updateProcess(process) {
     let headers = new Headers();
     headers.append('Content-Type', 'application/json');
     return this.http
       .put('http://localhost:5000/api/processes/', JSON.stringify(process), { headers: headers })
-      .catch(this.handleError);;
+      .catch(this.handleError);
   }
   getLink() {
     return this.http
