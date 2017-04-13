@@ -2,34 +2,34 @@
     <span>{{dialogName}} Activity</span>
     <form #formCtrl="ngForm">
         <md-input-container>
-            <input mdInput placeholder="Name" [ngModel]="name" (ngModelChange)="name = $event" required name="name">
+            <input md-input placeholder="Name" [ngModel]="name" (ngModelChange)="name = $event" required name="name">
         </md-input-container>
         <md-input-container>
-            <input mdInput placeholder="Units" [(ngModel)]="units" required name="units">
+            <input md-input placeholder="Units" [(ngModel)]="units" required name="units">
         </md-input-container>
         <md-slide-toggle [ngModel]="inputProdRate" (ngModelChange)="inputProdRate = $event" required name="inputProdRate">Input Productive Rates</md-slide-toggle>
         <md-input-container *ngIf="inputProdRate === true">
-            <input mdInput placeholder="Safe Productivity Rate" [ngModel]="safeProductivityRate" (ngModelChange)="safeProductivityRate = $event"
+            <input md-input placeholder="Safe Productivity Rate" [ngModel]="safeProductivityRate" (ngModelChange)="safeProductivityRate = $event"
                 required name="safeProductivityRate">
         </md-input-container>
         <md-input-container *ngIf="inputProdRate === true">
-            <input mdInput placeholder="Aggressive Productivity Rate" [ngModel]="aggressiveProductivityRate" name="aggressiveProductivityRate"
+            <input md-input placeholder="Aggressive Productivity Rate" [ngModel]="aggressiveProductivityRate" name="aggressiveProductivityRate"
                 (ngModelChange)="aggressiveProductivityRate = $event" required>
         </md-input-container>
         <md-input-container *ngIf="inputProdRate === false">
-            <input mdInput placeholder="Safe Duration" [ngModel]="duration" (ngModelChange)="duration = $event"
+            <input md-input placeholder="Safe Duration" [ngModel]="duration" (ngModelChange)="duration = $event"
                 required name="duration">
         </md-input-container>
         <md-input-container *ngIf="inputProdRate === false">
-            <input mdInput placeholder="Aggressive Duration" [ngModel]="aggressiveDuration" name="aggressiveDuration"
+            <input md-input placeholder="Aggressive Duration" [ngModel]="aggressiveDuration" name="aggressiveDuration"
                 (ngModelChange)="aggressiveDuration = $event" required>
         </md-input-container>
         <md-input-container>
-            <input mdInput placeholder="Start To Finish" [ngModel]="startToFinish" (ngModelChange)="startToFinish = $event" required
+            <input md-input placeholder="Start To Finish" [ngModel]="startToFinish" (ngModelChange)="startToFinish = $event" required
                 name="startToFinish">
         </md-input-container>
         <md-input-container>
-            <input mdInput placeholder="Unit Delta" [ngModel]="unitDelta" (ngModelChange)="unitDelta = $event" required name="unitDelta">
+            <input md-input placeholder="Unit Delta" [ngModel]="unitDelta" (ngModelChange)="unitDelta = $event" required name="unitDelta">
         </md-input-container>
         <md-select placeholder="Process" [(ngModel)]="processSelected" name="processSelected" (ngModelChange)="processSelected = $event">
             <md-option *ngFor="let p of processes" [value]="p.key">
