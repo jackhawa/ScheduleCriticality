@@ -7,7 +7,7 @@ services:
     ports:
       - 1433:1433
     volumes:
-      - C://Temp:/var/opt/mssql/temp/
+      - C://Temp:/var/opt/mssql/data/
   api:
     build:
       context: ./api
