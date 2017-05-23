@@ -10,6 +10,8 @@ namespace SchedulePath.Services
     {
         public ProcessorResult Process(bool withCriticalPath, IEnumerable<Activity> activities, Activity startingPoint)
         {
+            if(!activities.Any()) return null;
+
             CalculateActivities(activities);
 
             if (withCriticalPath)

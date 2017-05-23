@@ -10,6 +10,7 @@ namespace SchedulePath.Services
     {
         public GraphConfig ProcessGraph(bool withCriticalPath, ProcessorResult upperResult, ProcessorResult lowerResult)
         {
+            if(upperResult == null || lowerResult == null) return null;
             var upwardGraph = BuildConfig().AddActivities(upperResult.Activities);
 
             var downwardGraph = BuildConfig().AddActivities(lowerResult.Activities);

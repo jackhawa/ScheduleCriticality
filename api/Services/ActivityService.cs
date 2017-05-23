@@ -33,9 +33,9 @@ namespace SchedulePath.Services
             var downwardActivities = activities.Where(a => a.Section == ActivitySection.DOWNWARD);
 
             var upperSectionResult = _activityProcessor.Process(withCriticalPath, upwardActivities,
-                upwardActivities.First(a => string.IsNullOrEmpty(a.Dependencies)));
+                upwardActivities.FirstOrDefault(a => string.IsNullOrEmpty(a.Dependencies)));
             var lowerSectionResult = _activityProcessor.Process(withCriticalPath, downwardActivities,
-                downwardActivities.First(a => string.IsNullOrEmpty(a.Dependencies)));
+                downwardActivities.FirstOrDefault(a => string.IsNullOrEmpty(a.Dependencies)));
 
             if(withCriticalPath)
                 _linkProcessor.Process(activities, link, ref upperSectionResult, ref lowerSectionResult);

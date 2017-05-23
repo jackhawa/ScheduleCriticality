@@ -1,8 +1,13 @@
 docker tag schedulecriticality_api jackhawa/schedulecriticality_api
 docker push jackhawa/schedulecriticality_api
 
+docker tag schedulecriticality_sqlinux jackhawa/schedulecriticality_sqlinux
+docker push jackhawa/schedulecriticality_sqlinux
+
 docker tag schedulecriticality_web jackhawa/schedulecriticality_web
 docker push jackhawa/schedulecriticality_web
+
+Run sqlinux: docker run -p 1433:1433 schedulecriticality_sqlinux
 
 Stop all containers
 docker stop $(docker ps -a -q)

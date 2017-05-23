@@ -16,8 +16,12 @@ namespace SchedulePath.Services
         public void Process(IEnumerable<Activity> activities, Link link,
             ref ProcessorResult upwardProcessorResult, ref ProcessorResult downwardProcessorResult)
         {
-            var upperActivity = activities.Single(a => link.UpwardActivity == a.Id);
-            var lowerActivity = activities.Single(a => link.DownwardActivity == a.Id);
+            if(!activities.Any()) return;
+
+            var upperActivity = activities.SingleOrDefault(a => link.UpwardActivity == a.Id);
+            var lowerActivity = activities.SingleOrDefault(a => link.DownwardActivity == a.Id);
+
+            if(upperActivity == null || lowerActivity == null) return;
 
             //Determine controlling link shift
             var delta = upperActivity.ToDuration + upperActivity.FeedingBuffer +
