@@ -22,6 +22,11 @@ namespace SchedulePath
         {
             _env = env;
 
+            #if DEBUG
+                env.EnvironmentName = "Local";
+            #endif
+
+
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
