@@ -40,8 +40,12 @@ namespace SchedulePath.Services
             {
                 FeedingBuffer = new float?[] { upperActivity.ToDuration + link.TimePeriod + upperActivity.FeedingBuffer,
                 upperActivity.ToUnit },
-                LinkDistance = new float?[] { upperActivity.ToDuration + link.TimePeriod + upperActivity.FeedingBuffer,
-                lowerActivity.FromUnit },
+                LinkDistance = new LinkDistance {
+                    StartingDuration = upperActivity.ToDuration,
+                    TimePeriod = link.TimePeriod,
+                    FeedingBuffer = upperActivity.FeedingBuffer,
+                    StartingUnit = lowerActivity.FromUnit
+                },
                 Flip = -1
             });
 

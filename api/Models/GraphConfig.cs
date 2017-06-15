@@ -38,7 +38,9 @@ namespace SchedulePath.Models
         public GraphConfig AddProjectBuff(ProjectBuffer projectBuffer)
         {
             var newSeries = new List<Series>();
-            var projectBufferList = new List<float[]> { new float[] {         projectBuffer.StartingDuration, projectBuffer.StartingUnit },new float[] {(float)(projectBuffer.StartingDuration + projectBuffer.Buffer), projectBuffer.StartingUnit }
+            var projectBufferList = new List<float[]> {
+                new float[] { projectBuffer.StartingDuration, projectBuffer.StartingUnit },
+                new float[] { (float)(projectBuffer.StartingDuration + projectBuffer.Buffer), projectBuffer.StartingUnit }
             };
 
             newSeries.Add(new Series
@@ -109,8 +111,12 @@ namespace SchedulePath.Models
                     if (actWithDir.FeedingBuffer != null)
                         points.Add(new float[] { (float)actWithDir.FeedingBuffer[0] + actWithDir.LinkShift,
                             (float)actWithDir.FeedingBuffer[1] });
-                    points.Add(new float[] { (float)actWithDir.LinkDistance[0] + actWithDir.LinkShift,
-                        (float)actWithDir.LinkDistance[1] * actWithDir.Flip });
+                    points.Add(new float[] { (float)actWithDir.LinkDistance.StartingDuration +
+                    actWithDir.LinkDistance.PreviousFeedingBuffers + 
+                    actWithDir.LinkDistance.FeedingBuffer + 
+                    actWithDir.LinkDistance.TimePeriod +
+                    actWithDir.LinkShift,
+                        (float)actWithDir.LinkDistance.StartingUnit * actWithDir.Flip });
                 }
                 else
                 {

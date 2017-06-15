@@ -67,11 +67,11 @@ namespace SchedulePath.Services
                         .FirstOrDefault();
                     if (link != null)
                     {
-                        link.FeedingBuffer = new float?[] { link.LinkDistance[0] + sumPreviousFbs + feedingBuffer,
+                        link.FeedingBuffer = new float?[] { link.LinkDistance.StartingDuration + sumPreviousFbs + feedingBuffer,
                             criticalActivitiesInProc.Max(a => link.Direction == ActivityDirection.Normal?
                             a.StartingUnit + a.Units: a.StartingUnit) };
-                        link.LinkDistance = new float?[] { link.LinkDistance[0] + sumPreviousFbs + feedingBuffer,
-                            link.LinkDistance[1] };
+                        link.LinkDistance.PreviousFeedingBuffers = sumPreviousFbs;
+                        link.LinkDistance.FeedingBuffer = feedingBuffer; ;
                     }
                 }
 
@@ -139,7 +139,15 @@ namespace SchedulePath.Services
 
             visited[currentAct.Id] = true;
 
-            if (deltaLink != null) tempResults.Add(new ActivityWithDirection { LinkDistance = deltaLink, Direction = previousDirection });
+            if (deltaLink != null) tempResults.Add(new ActivityWithDirection
+            {
+                LinkDistance = new LinkDistance
+                {
+                    StartingDuration = deltaLink[0],
+                    StartingUnit = deltaLink[1]
+                },
+                Direction = previousDirection
+            });
 
             tempResults.Add(new ActivityWithDirection { Activity = currentAct, Direction = direction });
 
@@ -284,10 +292,22 @@ namespace SchedulePath.Services
         }
         public Activity Activity { get; set; }
         public ActivityDirection Direction { get; set; }
-        public float?[] LinkDistance { get; set; }
+        public LinkDistance LinkDistance { get; set; }
         public float?[] FeedingBuffer { get; set; }
         public float LinkShift { get; set; }
         public float Flip { get; set; }
+    }
+
+    public class ActivityBase
+    {
+        public float? StartingDuration { get; set; }
+        public float? StartingUnit { get; set; }
+    }
+    public class LinkDistance : ActivityBase
+    {
+        public float FeedingBuffer { get; set; }
+        public float PreviousFeedingBuffers { get; set; }
+        public float TimePeriod { get; set; }
     }
 
     public class CriticalPath
