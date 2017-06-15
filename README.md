@@ -1,10 +1,10 @@
-docker tag schedulecriticality_api jackhawa/schedulecriticality_api
+docker tag schedulecriticality_api jackhawa/schedulecriticality_api:1
 docker push jackhawa/schedulecriticality_api
 
-docker tag schedulecriticality_sqlinux jackhawa/schedulecriticality_sqlinux
+docker tag schedulecriticality_sqlinux jackhawa/schedulecriticality_sqlinux:1
 docker push jackhawa/schedulecriticality_sqlinux
 
-docker tag schedulecriticality_web jackhawa/schedulecriticality_web
+docker tag schedulecriticality_web jackhawa/schedulecriticality_web:1
 docker push jackhawa/schedulecriticality_web
 
 Run sqlinux: docker run -p 1433:1433 schedulecriticality_sqlinux

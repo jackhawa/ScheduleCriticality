@@ -10,7 +10,7 @@ namespace SchedulePath.Services
     {
         public ProcessorResult Process(bool withCriticalPath, IEnumerable<Activity> activities, Activity startingPoint)
         {
-            if(!activities.Any()) return null;
+            if (!activities.Any()) return null;
 
             CalculateActivities(activities);
 
@@ -81,11 +81,12 @@ namespace SchedulePath.Services
                     new float[] { lastProc.ToDuration + sumPreviousFbs + feedingBuffer, lastProc.ToUnit } });
             }
 
-            maxCriticalPath.ProjectBuffer = new List<float[]> {
-                new float[] { maxCriticalPath.ProjectBuffer[0][0] + processFeedingBuffer.Sum(r => r.Value),
-                    maxCriticalPath.ProjectBuffer[0][1]},
-                new float[] { maxCriticalPath.ProjectBuffer[1][0] + processFeedingBuffer.Sum(r => r.Value),
-                    maxCriticalPath.ProjectBuffer[1][1] } };
+            maxCriticalPath.ProjectBuffer = new ProjectBuffer
+            {
+                StartingDuration = maxCriticalPath.ProjectBuffer.StartingDuration + processFeedingBuffer.Sum(r => r.Value),
+                StartingUnit = maxCriticalPath.ProjectBuffer.StartingUnit,
+                Buffer = maxCriticalPath.ProjectBuffer.Buffer
+            };
 
             return feedingBuffers;
         }
@@ -108,8 +109,12 @@ namespace SchedulePath.Services
             });
             var maxDuration = criticalPaths.First().Where(a => a.LinkDistance == null).Max(a => a.Activity.ToDuration);
             var maxUnit = criticalPaths.First().Where(a => a.LinkDistance == null && a.Activity.ToDuration == maxDuration).First().Activity.ToUnit;
-            criticalPath.ProjectBuffer = new List<float[]> { new float[] { maxDuration, maxUnit },
-                new float[] { (float)(maxDuration + maxProjBuf), maxUnit } };
+            criticalPath.ProjectBuffer = new ProjectBuffer
+            {
+                StartingDuration = maxDuration,
+                StartingUnit = maxUnit,
+                Buffer = maxProjBuf
+            };
             return criticalPath;
         }
 
@@ -288,6 +293,13 @@ namespace SchedulePath.Services
     public class CriticalPath
     {
         public List<ActivityWithDirection> ActivityDirections { get; set; }
-        public List<float[]> ProjectBuffer { get; set; }
+        public ProjectBuffer ProjectBuffer { get; set; }
+    }
+
+    public class ProjectBuffer
+    {
+        public double Buffer { get; set; }
+        public float StartingDuration { get; set; }
+        public float StartingUnit { get; set; }
     }
 }

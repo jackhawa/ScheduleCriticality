@@ -16,12 +16,12 @@ namespace SchedulePath.Services
         public void Process(IEnumerable<Activity> activities, Link link,
             ref ProcessorResult upwardProcessorResult, ref ProcessorResult downwardProcessorResult)
         {
-            if(!activities.Any()) return;
+            if (!activities.Any()) return;
 
             var upperActivity = activities.SingleOrDefault(a => link.UpwardActivity == a.Id);
             var lowerActivity = activities.SingleOrDefault(a => link.DownwardActivity == a.Id);
 
-            if(upperActivity == null || lowerActivity == null) return;
+            if (upperActivity == null || lowerActivity == null) return;
 
             //Determine controlling link shift
             var delta = upperActivity.ToDuration + upperActivity.FeedingBuffer +
@@ -31,7 +31,7 @@ namespace SchedulePath.Services
             downwardProcessorResult.Activities.ToList().ForEach(a => a.LinkShift = delta);
             downwardProcessorResult.CriticalPath.ActivityDirections.ToList()
                 .ForEach(a => a.LinkShift = delta);
-            downwardProcessorResult.CriticalPath.ProjectBuffer.ToList().ForEach(a => a[0] += delta);
+            downwardProcessorResult.CriticalPath.ProjectBuffer.StartingDuration += delta;
             downwardProcessorResult.FeedingBuffers.ToList().ForEach(f => f.ToList().ForEach(b => b[0] += delta));
 
             //Add controlling link

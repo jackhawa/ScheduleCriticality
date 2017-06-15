@@ -35,13 +35,16 @@ namespace SchedulePath.Models
         }
 
 
-        public GraphConfig AddProjectBuff(List<float[]> projectBuffer)
+        public GraphConfig AddProjectBuff(ProjectBuffer projectBuffer)
         {
             var newSeries = new List<Series>();
+            var projectBufferList = new List<float[]> { new float[] {         projectBuffer.StartingDuration, projectBuffer.StartingUnit },new float[] {(float)(projectBuffer.StartingDuration + projectBuffer.Buffer), projectBuffer.StartingUnit }
+            };
+
             newSeries.Add(new Series
             {
                 name = "Project Buffer",
-                data = projectBuffer.ToArray(),
+                data = projectBufferList.ToArray(),
                 lineWidth = 3,
                 color = "red"
             });
