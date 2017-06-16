@@ -8,7 +8,7 @@ namespace SchedulePath.Services
 {
     public class ActivityProcessor : IActivityProcessor
     {
-        public ProcessorResult Process(bool withCriticalPath, IEnumerable<Activity> activities, Activity startingPoint)
+        public Schedule Process(bool withCriticalPath, IEnumerable<Activity> activities, Activity startingPoint)
         {
             if (!activities.Any()) return null;
 
@@ -282,63 +282,9 @@ namespace SchedulePath.Services
             }
         }
 
-        private ProcessorResult BuildProcessorResult()
+        private Schedule BuildProcessorResult()
         {
-            return new ProcessorResult();
+            return new Schedule();
         }
-    }
-
-    public enum ActivityDirection
-    {
-        Normal,
-        Reverse
-    }
-
-    public class ActivityWithDirection
-    {
-        public ActivityWithDirection()
-        {
-            Flip = 1;
-        }
-        public Activity Activity { get; set; }
-        public ActivityDirection Direction { get; set; }
-        public LinkDistance LinkDistance { get; set; }
-        public FeedingBuffer FeedingBuffer { get; set; }
-        public float LinkShift { get; set; }
-        public float Flip { get; set; }
-    }
-
-    public class ActivityBase
-    {
-        public float? StartingDuration { get; set; }
-        public float? StartingUnit { get; set; }
-    }
-    public class LinkDistance : ActivityBase
-    {
-        public float FeedingBuffer { get; set; }
-        public float PreviousFeedingBuffers { get; set; }
-        public float TimePeriod { get; set; }
-    }
-
-    public class FeedingBuffer : ActivityBase
-    {
-        public float PreviousFeedingBuffers { get; set; }
-        public float Buffer { get; set; }
-        public float TimePeriod { get; set; }
-        public float ControllingLinkShift { get; set; }
-    }
-
-    public class CriticalPath
-    {
-        public List<ActivityWithDirection> ActivityDirections { get; set; }
-        public ProjectBuffer ProjectBuffer { get; set; }
-    }
-
-    public class ProjectBuffer
-    {
-        public double Buffer { get; set; }
-        public float StartingDuration { get; set; }
-        public float StartingUnit { get; set; }
-        public float ControllingLinkShift { get; set; }
     }
 }

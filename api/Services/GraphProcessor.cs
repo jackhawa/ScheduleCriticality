@@ -8,7 +8,7 @@ namespace SchedulePath.Services
 {
     public class GraphProcessor : IGraphProcessor
     {
-        public GraphConfig ProcessGraph(bool withCriticalPath, ProcessorResult upperResult, ProcessorResult lowerResult)
+        public GraphConfig ProcessGraph(bool withCriticalPath, Schedule upperResult, Schedule lowerResult)
         {
             if(upperResult == null || lowerResult == null) return null;
             var upwardGraph = BuildConfig().AddActivities(upperResult.Activities);

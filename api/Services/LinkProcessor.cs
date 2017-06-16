@@ -14,7 +14,7 @@ namespace SchedulePath.Services
             _activityProcessor = activityProcessor;
         }
         public void Process(IEnumerable<Activity> activities, Link link,
-            ref ProcessorResult upwardProcessorResult, ref ProcessorResult downwardProcessorResult)
+            ref Schedule upwardProcessorResult, ref Schedule downwardProcessorResult)
         {
             if (!activities.Any()) return;
 
@@ -23,16 +23,10 @@ namespace SchedulePath.Services
 
             if (upperActivity == null || lowerActivity == null) return;
 
-            //Determine controlling link shift
             var delta = upperActivity.ToDuration + upperActivity.FeedingBuffer +
                 link.TimePeriod - lowerActivity.FromDuration - lowerActivity.FeedingBuffer;
 
-            //Perform shifting according to controlling link
-            downwardProcessorResult.Activities.ToList().ForEach(a => a.LinkShift = delta);
-            downwardProcessorResult.CriticalPath.ActivityDirections.ToList()
-                .ForEach(a => a.LinkShift = delta);
-            downwardProcessorResult.CriticalPath.ProjectBuffer.ControllingLinkShift = delta;
-            downwardProcessorResult.FeedingBuffers.ToList().ForEach(f => f.ControllingLinkShift = delta);
+            downwardProcessorResult.ShiftSchedule(delta);
 
             //Add controlling link
             var lastActivityInUpward = upwardProcessorResult.CriticalPath.ActivityDirections.Last();

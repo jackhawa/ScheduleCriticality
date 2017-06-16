@@ -9,6 +9,6 @@ namespace SchedulePath.Services
     public interface ILinkProcessor
     {
         void Process(IEnumerable<Activity> activities, Link link, 
-            ref ProcessorResult upwardProcessorResult, ref ProcessorResult downwardProcessorResult);
+            ref Schedule upwardProcessorResult, ref Schedule downwardProcessorResult);
     }
 }
