@@ -30,9 +30,9 @@ namespace SchedulePath.Services
                     .AddActivities(activities);
         }
 
-        private List<List<float[]>> CalculateFeedingBuffers(IEnumerable<Activity> activities, CriticalPath maxCriticalPath)
+        private List<FeedingBuffer> CalculateFeedingBuffers(IEnumerable<Activity> activities, CriticalPath maxCriticalPath)
         {
-            var feedingBuffers = new List<List<float[]>>();
+            var feedingBuffers = new List<FeedingBuffer>();
             var processFeedingBuffer = new List<KeyValuePair<int, float>>();
             var orderedProcesses = new List<OrderedProcess>();
             var orderedIndex = 0;
@@ -82,8 +82,13 @@ namespace SchedulePath.Services
 
                 var maxDuration = proc.elements.Max(a => a.ToDuration);
                 var lastProc = proc.elements.First(a => a.ToDuration == maxDuration);
-                feedingBuffers.Add(new List<float[]> { new float[] { lastProc.ToDuration + sumPreviousFbs, lastProc.ToUnit },
-                    new float[] { lastProc.ToDuration + sumPreviousFbs + feedingBuffer, lastProc.ToUnit } });
+                feedingBuffers.Add(new FeedingBuffer
+                {
+                    StartingDuration = lastProc.ToDuration,
+                    PreviousFeedingBuffers = sumPreviousFbs,
+                    Buffer = feedingBuffer,
+                    StartingUnit = lastProc.ToUnit
+                });
             }
 
             maxCriticalPath.ProjectBuffer = new ProjectBuffer
@@ -320,6 +325,7 @@ namespace SchedulePath.Services
         public float PreviousFeedingBuffers { get; set; }
         public float Buffer { get; set; }
         public float TimePeriod { get; set; }
+        public float ControllingLinkShift { get; set; }
     }
 
     public class CriticalPath
@@ -333,5 +339,6 @@ namespace SchedulePath.Services
         public double Buffer { get; set; }
         public float StartingDuration { get; set; }
         public float StartingUnit { get; set; }
+        public float ControllingLinkShift { get; set; }
     }
 }

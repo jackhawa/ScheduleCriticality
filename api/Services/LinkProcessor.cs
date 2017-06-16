@@ -31,8 +31,8 @@ namespace SchedulePath.Services
             downwardProcessorResult.Activities.ToList().ForEach(a => a.LinkShift = delta);
             downwardProcessorResult.CriticalPath.ActivityDirections.ToList()
                 .ForEach(a => a.LinkShift = delta);
-            downwardProcessorResult.CriticalPath.ProjectBuffer.StartingDuration += delta;
-            downwardProcessorResult.FeedingBuffers.ToList().ForEach(f => f.ToList().ForEach(b => b[0] += delta));
+            downwardProcessorResult.CriticalPath.ProjectBuffer.ControllingLinkShift = delta;
+            downwardProcessorResult.FeedingBuffers.ToList().ForEach(f => f.ControllingLinkShift = delta);
 
             //Add controlling link
             var lastActivityInUpward = upwardProcessorResult.CriticalPath.ActivityDirections.Last();

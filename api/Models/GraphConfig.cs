@@ -39,8 +39,8 @@ namespace SchedulePath.Models
         {
             var newSeries = new List<Series>();
             var projectBufferList = new List<float[]> {
-                new float[] { projectBuffer.StartingDuration, projectBuffer.StartingUnit },
-                new float[] { (float)(projectBuffer.StartingDuration + projectBuffer.Buffer), projectBuffer.StartingUnit }
+                new float[] { projectBuffer.StartingDuration + projectBuffer.ControllingLinkShift, projectBuffer.StartingUnit },
+                new float[] { (float)(projectBuffer.StartingDuration + projectBuffer.ControllingLinkShift + projectBuffer.Buffer), projectBuffer.StartingUnit }
             };
 
             newSeries.Add(new Series
@@ -54,15 +54,20 @@ namespace SchedulePath.Models
             return this;
         }
 
-        internal GraphConfig AddFeedingBuffers(List<List<float[]>> feedingBuffers)
+        internal GraphConfig AddFeedingBuffers(List<FeedingBuffer> feedingBuffers)
         {
             var newSeries = new List<Series>();
             feedingBuffers.ForEach(fb =>
             {
+                var fbList = new List<float[]> {
+                    new float[] {
+                        (float)fb.StartingDuration + fb.PreviousFeedingBuffers + fb.ControllingLinkShift,   (float)fb.StartingUnit },
+                    new float[] {
+                        (float)fb.StartingDuration + fb.PreviousFeedingBuffers + fb.ControllingLinkShift + fb.Buffer, (float)fb.StartingUnit } };
                 newSeries.Add(new Series
                 {
                     name = "Feeding Buffer",
-                    data = fb.ToArray(),
+                    data = fbList.ToArray(),
                     lineWidth = 3,
                     color = "orange"
                 });
@@ -116,8 +121,8 @@ namespace SchedulePath.Models
                             actWithDir.LinkShift,
                             (float)actWithDir.FeedingBuffer.StartingUnit });
                     points.Add(new float[] { (float)actWithDir.LinkDistance.StartingDuration +
-                    actWithDir.LinkDistance.PreviousFeedingBuffers + 
-                    actWithDir.LinkDistance.FeedingBuffer + 
+                    actWithDir.LinkDistance.PreviousFeedingBuffers +
+                    actWithDir.LinkDistance.FeedingBuffer +
                     actWithDir.LinkDistance.TimePeriod +
                     actWithDir.LinkShift,
                         (float)actWithDir.LinkDistance.StartingUnit * actWithDir.Flip });
