@@ -67,9 +67,14 @@ namespace SchedulePath.Services
                         .FirstOrDefault();
                     if (link != null)
                     {
-                        link.FeedingBuffer = new float?[] { link.LinkDistance.StartingDuration + sumPreviousFbs + feedingBuffer,
-                            criticalActivitiesInProc.Max(a => link.Direction == ActivityDirection.Normal?
-                            a.StartingUnit + a.Units: a.StartingUnit) };
+                        link.FeedingBuffer = new FeedingBuffer
+                        {
+                            StartingDuration = link.LinkDistance.StartingDuration,
+                            PreviousFeedingBuffers = sumPreviousFbs,
+                            Buffer = feedingBuffer,
+                            StartingUnit = criticalActivitiesInProc.Max(a => link.Direction == ActivityDirection.Normal ?
+                            a.StartingUnit + a.Units : a.StartingUnit)
+                        };
                         link.LinkDistance.PreviousFeedingBuffers = sumPreviousFbs;
                         link.LinkDistance.FeedingBuffer = feedingBuffer; ;
                     }
@@ -293,7 +298,7 @@ namespace SchedulePath.Services
         public Activity Activity { get; set; }
         public ActivityDirection Direction { get; set; }
         public LinkDistance LinkDistance { get; set; }
-        public float?[] FeedingBuffer { get; set; }
+        public FeedingBuffer FeedingBuffer { get; set; }
         public float LinkShift { get; set; }
         public float Flip { get; set; }
     }
@@ -307,6 +312,13 @@ namespace SchedulePath.Services
     {
         public float FeedingBuffer { get; set; }
         public float PreviousFeedingBuffers { get; set; }
+        public float TimePeriod { get; set; }
+    }
+
+    public class FeedingBuffer : ActivityBase
+    {
+        public float PreviousFeedingBuffers { get; set; }
+        public float Buffer { get; set; }
         public float TimePeriod { get; set; }
     }
 

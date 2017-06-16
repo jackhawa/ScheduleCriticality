@@ -38,8 +38,13 @@ namespace SchedulePath.Services
             var lastActivityInUpward = upwardProcessorResult.CriticalPath.ActivityDirections.Last();
             upwardProcessorResult.CriticalPath.ActivityDirections.Add(new ActivityWithDirection
             {
-                FeedingBuffer = new float?[] { upperActivity.ToDuration + link.TimePeriod + upperActivity.FeedingBuffer,
-                upperActivity.ToUnit },
+                FeedingBuffer = new FeedingBuffer
+                {
+                    StartingDuration = upperActivity.ToDuration,
+                    Buffer = upperActivity.FeedingBuffer,
+                    TimePeriod = link.TimePeriod,
+                    StartingUnit = upperActivity.ToUnit
+                },
                 LinkDistance = new LinkDistance {
                     StartingDuration = upperActivity.ToDuration,
                     TimePeriod = link.TimePeriod,

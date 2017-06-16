@@ -109,8 +109,12 @@ namespace SchedulePath.Models
                 if (actWithDir.LinkDistance != null)
                 {
                     if (actWithDir.FeedingBuffer != null)
-                        points.Add(new float[] { (float)actWithDir.FeedingBuffer[0] + actWithDir.LinkShift,
-                            (float)actWithDir.FeedingBuffer[1] });
+                        points.Add(new float[] { (float)actWithDir.FeedingBuffer.StartingDuration +
+                            actWithDir.FeedingBuffer.PreviousFeedingBuffers +
+                            actWithDir.FeedingBuffer.Buffer +
+                            actWithDir.FeedingBuffer.TimePeriod +
+                            actWithDir.LinkShift,
+                            (float)actWithDir.FeedingBuffer.StartingUnit });
                     points.Add(new float[] { (float)actWithDir.LinkDistance.StartingDuration +
                     actWithDir.LinkDistance.PreviousFeedingBuffers + 
                     actWithDir.LinkDistance.FeedingBuffer + 
