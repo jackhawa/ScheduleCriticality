@@ -22,7 +22,7 @@ namespace SchedulePath.Services
             _repository.DeleteLink(id);
         }
 
-        public Link GetLink()
+        public LinkWithActivity GetLink()
         {
             return _repository.GetLink();
         }

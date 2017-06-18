@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using SchedulePath.Models;
-using SchedulePath.Helper;
 
 namespace SchedulePath.Services
 {
@@ -13,18 +13,13 @@ namespace SchedulePath.Services
         {
             _activityProcessor = activityProcessor;
         }
-        public void Process(IEnumerable<Activity> activities, Link link,
+        public void Process(IEnumerable<Activity> activities, LinkWithActivity link,
             ref Schedule upwardProcessorResult, ref Schedule downwardProcessorResult)
         {
-            if (!activities.Any()) return;
+            if (!activities.Any() || link.UpwardAct == null || link.DownwardAct == null) return;
 
-            var upperActivity = activities.SingleOrDefault(a => link.UpwardActivity == a.Id);
-            var lowerActivity = activities.SingleOrDefault(a => link.DownwardActivity == a.Id);
-
-            if (upperActivity == null || lowerActivity == null) return;
-
-            var delta = upperActivity.ToDuration + upperActivity.FeedingBuffer +
-                link.TimePeriod - lowerActivity.FromDuration - lowerActivity.FeedingBuffer;
+            var delta = link.UpwardAct.ToDuration + link.UpwardAct.FeedingBuffer +
+                link.TimePeriod - link.DownwardAct.FromDuration - link.DownwardAct.FeedingBuffer;
 
             downwardProcessorResult.ShiftSchedule(delta);
 
@@ -34,39 +29,27 @@ namespace SchedulePath.Services
             {
                 FeedingBuffer = new FeedingBuffer
                 {
-                    StartingDuration = upperActivity.ToDuration,
-                    Buffer = upperActivity.FeedingBuffer,
+                    StartingDuration = link.UpwardAct.ToDuration,
+                    Buffer = link.UpwardAct.FeedingBuffer,
                     TimePeriod = link.TimePeriod,
-                    StartingUnit = upperActivity.ToUnit
+                    StartingUnit = link.UpwardAct.ToUnit
                 },
                 LinkDistance = new LinkDistance {
-                    StartingDuration = upperActivity.ToDuration,
+                    StartingDuration = link.UpwardAct.ToDuration,
                     TimePeriod = link.TimePeriod,
-                    FeedingBuffer = upperActivity.FeedingBuffer,
-                    StartingUnit = lowerActivity.FromUnit
+                    FeedingBuffer = link.UpwardAct.FeedingBuffer,
+                    StartingUnit = link.DownwardAct.FromUnit
                 },
                 Flip = -1
             });
 
-            /*
-            //Recalculate critical path of right side of controlling link
-            var continuationActivities = activities.Where(a => a.Section == ActivitySection.DOWNWARD
-            && (a.FromDuration + a.FeedingBuffer + a.LinkShift) > (upperActivity.ToDuration + link.TimePeriod)).Select(a => a.Clone());
+            var totalProjectBuffer = Math.Sqrt(upwardProcessorResult.CriticalPath.ActivityDirections.Where(a => a.LinkDistance == null)
+                    .Sum(a => Math.Pow(a.Activity.AggressiveDuration - a.Activity.Duration, 2)) + 
+                    downwardProcessorResult.CriticalPath.ActivityDirections.Where(a => a.LinkDistance == null)
+                    .Sum(a => Math.Pow(a.Activity.AggressiveDuration - a.Activity.Duration, 2)));
 
-            var contProcessorResult = _activityProcessor.Process(true, activities.Where(a => a.Section == ActivitySection.DOWNWARD), 
-                continuationActivities.Single(a => a.Id == link.DownwardActivity));
-
-            contProcessorResult.CriticalPath.ActivityDirections.Where(ad => ad.Activity != null).ToList().ForEach(ad => {
-                ad.Activity.Flip = -1;
-            });
-
-            contProcessorResult.CriticalPath.ActivityDirections.Where(ad => ad.Activity == null).ToList().ForEach(ad => {
-                ad.LinkShift = delta;
-                ad.Flip = -1;
-            });
-
-            //Append right side critical path to complete upper section critical path
-            upwardProcessorResult.CriticalPath.ActivityDirections.AddRange(contProcessorResult.CriticalPath.ActivityDirections);*/
+            upwardProcessorResult.CriticalPath.ProjectBuffer.Buffer = 0;
+            downwardProcessorResult.CriticalPath.ProjectBuffer.Buffer = totalProjectBuffer;            
         }
     }
 }

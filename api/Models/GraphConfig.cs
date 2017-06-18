@@ -107,7 +107,7 @@ namespace SchedulePath.Models
 
         private List<float[]> ConvertToPoints(List<ActivityWithDirection> path)
         {
-            var points = new List<float[]> { new float[] { 0 + path.First().LinkShift, 0 } };
+            var points = new List<float[]> { new float[] { path.First().Activity.FromDuration + path.First().LinkShift, 0 } };
 
             foreach (var actWithDir in path)
             {

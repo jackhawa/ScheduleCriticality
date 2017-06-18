@@ -8,7 +8,7 @@ namespace SchedulePath.Services
 {
     public interface ILinkService
     {
-        Link GetLink();
+        LinkWithActivity GetLink();
         void AddLink(Link request);
         void UpdateLink(Link request);
         void DeleteLink(int id);

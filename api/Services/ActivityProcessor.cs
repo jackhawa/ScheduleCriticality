@@ -51,6 +51,8 @@ namespace SchedulePath.Services
                     .Where(act => act.FromDuration < criticalActivitiesInProc.Select(c => c.FromDuration).Min())
                     : proc.elements;
 
+                if (!criticalActivitiesInProc.Any()) continue;
+
                 var feedingBuffer = (float)Math.Sqrt(nonCriticalActivities
                     .Sum(a => Math.Pow(a.AggressiveDuration - a.Duration, 2)));
 
@@ -76,7 +78,7 @@ namespace SchedulePath.Services
                             a.StartingUnit + a.Units : a.StartingUnit)
                         };
                         link.LinkDistance.PreviousFeedingBuffers = sumPreviousFbs;
-                        link.LinkDistance.FeedingBuffer = feedingBuffer; ;
+                        link.LinkDistance.FeedingBuffer = feedingBuffer;
                     }
                 }
 

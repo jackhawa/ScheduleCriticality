@@ -13,7 +13,7 @@ namespace SchedulePath.Repository
         void AddProcess(Process process);
         void UpdateProcess(Process process);
         void DeleteProcess(int id);
-        Link GetLink();
+        LinkWithActivity GetLink();
         void AddLink(Link request);
         void UpdateLink(Link request);
         void DeleteLink(int id);

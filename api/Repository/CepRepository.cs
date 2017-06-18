@@ -77,11 +77,20 @@ namespace SchedulePath.Repository
             _context.SaveChanges();
         }
 
-        public Link GetLink()
+        public LinkWithActivity GetLink()
         {
             var links = _context.Links;
             if (links.Any())
-                return links.Single();
+            {
+                var link = links.Single();
+                return new LinkWithActivity
+                {
+                    Id = link.Id,
+                    TimePeriod = link.TimePeriod,
+                    UpwardAct = _context.Activities.First(a => a.Id == link.UpwardActivity),
+                    DownwardAct = _context.Activities.First(a => a.Id == link.DownwardActivity)
+                };
+            }
             return null;
         }
 
