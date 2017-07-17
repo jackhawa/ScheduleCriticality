@@ -93,7 +93,7 @@ namespace SchedulePath.Models
                         },
                         new float[]
                         {
-                            act.StartingDuration + act.Duration  + act.FeedingBuffer + act.LinkShift,
+                            act.StartingDuration + act.DurationDefault  + act.FeedingBuffer + act.LinkShift,
                             act.StartingUnit + act.Units
                         }
                     },

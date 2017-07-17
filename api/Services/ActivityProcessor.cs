@@ -33,6 +33,9 @@ namespace SchedulePath.Services
         private List<FeedingBuffer> CalculateFeedingBuffers(IEnumerable<Activity> activities, CriticalPath maxCriticalPath)
         {
             var feedingBuffers = new List<FeedingBuffer>();
+
+            if (maxCriticalPath == null) return feedingBuffers;
+
             var processFeedingBuffer = new List<KeyValuePair<int, float>>();
             var orderedProcesses = new List<OrderedProcess>();
             var orderedIndex = 0;
@@ -54,7 +57,7 @@ namespace SchedulePath.Services
                 if (!criticalActivitiesInProc.Any()) continue;
 
                 var feedingBuffer = (float)Math.Sqrt(nonCriticalActivities
-                    .Sum(a => Math.Pow(a.AggressiveDuration - a.Duration, 2)));
+                    .Sum(a => Math.Pow(a.Duration - a.AggressiveDuration, 2)));
 
                 processFeedingBuffer.Add(new KeyValuePair<int, float>(proc.order, feedingBuffer));
 
@@ -112,7 +115,7 @@ namespace SchedulePath.Services
             criticalPaths.ForEach(cp =>
             {
                 var projBuf = Math.Sqrt(cp.Where(a => a.LinkDistance == null)
-                    .Sum(a => Math.Pow(a.Activity.AggressiveDuration - a.Activity.Duration, 2)));
+                    .Sum(a => Math.Pow(a.Activity.Duration - a.Activity.AggressiveDuration, 2)));
                 if (projBuf > maxProjBuf)
                 {
                     maxProjBuf = projBuf;
@@ -269,12 +272,12 @@ namespace SchedulePath.Services
                 item.StartingUnit = 0;
 
                 var itemWithMax = item.ActivityDependencies.Any() ? item.ActivityDependencies
-                    .OrderByDescending(d => d.StartingDuration + d.Duration).ToList()
+                    .OrderByDescending(d => d.StartingDuration + d.DurationDefault).ToList()
                     : new List<Activity>();
 
                 if (itemWithMax.Any())
                 {
-                    item.StartingDuration = itemWithMax.First().StartingDuration + itemWithMax.First().Duration;
+                    item.StartingDuration = itemWithMax.First().StartingDuration + itemWithMax.First().DurationDefault;
                     item.StartingUnit = itemWithMax.First().StartingUnit + itemWithMax.First().Units;
                 }
 

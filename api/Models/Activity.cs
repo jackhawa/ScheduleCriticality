@@ -7,7 +7,7 @@ using SchedulePath.Helper;
 
 namespace SchedulePath.Models
 {
-    public class Activity: ICloneable<Activity>
+    public class Activity : ICloneable<Activity>
     {
         public Activity()
         {
@@ -29,7 +29,7 @@ namespace SchedulePath.Models
         public DurationFunction? DurationFunction { get; set; }
         [JsonConverter(typeof(StringEnumConverter))]
         public ActivitySection Section { get; set; }
-        
+
         [NotMapped]
         public float StartingDuration { get; set; }
         [NotMapped]
@@ -37,7 +37,7 @@ namespace SchedulePath.Models
         {
             get
             {
-                return (float) TruncateDecimal(StartingDuration, 2);
+                return (float)TruncateDecimal(StartingDuration, 2);
             }
         }
         [NotMapped]
@@ -53,7 +53,7 @@ namespace SchedulePath.Models
         {
             get
             {
-                return (float) TruncateDecimal(StartingDuration, 2);
+                return (float)TruncateDecimal(StartingDuration, 2);
             }
         }
         [NotMapped]
@@ -86,6 +86,15 @@ namespace SchedulePath.Models
         public float FeedingBuffer { get; set; }
         [NotMapped]
         public float LinkShift { get; set; }
+        [NotMapped]
+        public float DurationDefault
+        {
+            get
+            {
+                return AggressiveDuration;
+            }
+        }
+
         public decimal TruncateDecimal(double value, int precision)
         {
             decimal step = (decimal)Math.Pow(10, precision);
