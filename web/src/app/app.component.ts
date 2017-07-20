@@ -129,11 +129,13 @@ export class AppComponent {
     }
 
     deleteActivity(selectedActivity) {
+        this.activities = null;
         this.httpService.deleteActivity(selectedActivity.id).
             subscribe(() => this.ngOnInit(), error => alert(error));
     }
 
     deleteProcess() {
+        this.processes = null;
         this.httpService.deleteProcess(this.selectedProcess.id).
             subscribe(() => this.ngOnInit(), error => alert(error));
     }
