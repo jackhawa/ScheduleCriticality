@@ -69,7 +69,7 @@ namespace SchedulePath.Models
         {
             get
             {
-                return (float)TruncateDecimal(StartingDuration + Duration, 2);
+                return (float)TruncateDecimal(StartingDuration + DurationDefault, 2);
             }
         }
         [NotMapped]

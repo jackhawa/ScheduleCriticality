@@ -10,29 +10,40 @@ namespace SchedulePath.Services
     {
         public GraphConfig ProcessGraph(bool withCriticalPath, Schedule upperResult, Schedule lowerResult)
         {
-            if(upperResult == null || lowerResult == null) return null;
-            var upwardGraph = BuildConfig().AddActivities(upperResult.Activities);
+            GraphConfig upwardGraph = null;
+            GraphConfig downwardGraph = null;
+            List<Series> allSeries = new List<Series>();
 
-            var downwardGraph = BuildConfig().AddActivities(lowerResult.Activities);
-
-            if (withCriticalPath)
+            if (upperResult != null)
             {
-                upwardGraph.AddCriticalPath(upperResult.CriticalPath.ActivityDirections)
-                    .AddProjectBuff(upperResult.CriticalPath.ProjectBuffer)
-                    .AddFeedingBuffers(upperResult.FeedingBuffers);
-                
-                downwardGraph.AddCriticalPath(lowerResult.CriticalPath.ActivityDirections)
-                    .AddProjectBuff(lowerResult.CriticalPath.ProjectBuffer)
-                    .AddFeedingBuffers(lowerResult.FeedingBuffers);
+                upwardGraph = BuildConfig().AddActivities(upperResult.Activities);
+                if (withCriticalPath)
+                {
+                    upwardGraph.AddCriticalPath(upperResult.CriticalPath.ActivityDirections)
+                        .AddProjectBuff(upperResult.CriticalPath.ProjectBuffer)
+                        .AddFeedingBuffers(upperResult.FeedingBuffers);
+                }
+                allSeries = upwardGraph.series.ToList();
             }
 
-            var allSeries = upwardGraph.series.ToList();
-            foreach (var serie in downwardGraph.series)
+            if (lowerResult != null)
             {
-                serie.data.ToList().ForEach(d => d[1] = d[1] * -1);
-                allSeries.Add(serie);
+                downwardGraph = BuildConfig().AddActivities(lowerResult.Activities);
+                if (withCriticalPath)
+                {
+                    downwardGraph.AddCriticalPath(lowerResult.CriticalPath.ActivityDirections)
+                        .AddProjectBuff(lowerResult.CriticalPath.ProjectBuffer)
+                        .AddFeedingBuffers(lowerResult.FeedingBuffers);
+                }
+
+                foreach (var serie in downwardGraph.series)
+                {
+                    serie.data.ToList().ForEach(d => d[1] = d[1] * -1);
+                    allSeries.Add(serie);
+                }
             }
-            upwardGraph.series = allSeries.ToArray();
+            
+            if(upwardGraph != null) upwardGraph.series = allSeries.ToArray();
             return upwardGraph;
         }
 

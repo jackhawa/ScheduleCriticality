@@ -87,8 +87,8 @@ namespace SchedulePath.Repository
                 {
                     Id = link.Id,
                     TimePeriod = link.TimePeriod,
-                    UpwardAct = _context.Activities.First(a => a.Id == link.UpwardActivity),
-                    DownwardAct = _context.Activities.First(a => a.Id == link.DownwardActivity)
+                    UpwardAct = _context.Activities.FirstOrDefault(a => a.Id == link.UpwardActivity),
+                    DownwardAct = _context.Activities.FirstOrDefault(a => a.Id == link.DownwardActivity)
                 };
             }
             return null;
