@@ -16,7 +16,9 @@ namespace SchedulePath.Services
         public void Process(IEnumerable<Activity> activities, LinkWithActivity link,
             ref Schedule upwardProcessorResult, ref Schedule downwardProcessorResult)
         {
-            if(upwardProcessorResult.CriticalPath == null || downwardProcessorResult.CriticalPath == null) 
+            if (upwardProcessorResult == null || downwardProcessorResult == null) return;
+
+            if (upwardProcessorResult.CriticalPath == null || downwardProcessorResult.CriticalPath == null) 
                 throw new Exception("Critical Path empty.");
 
             if (!activities.Any() || link.UpwardAct == null || link.DownwardAct == null) return;
