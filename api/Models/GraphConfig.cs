@@ -88,12 +88,12 @@ namespace SchedulePath.Models
                     {
                         new float[]
                         {
-                            act.StartingDuration + act.FeedingBuffer + act.LinkShift,
+                            act.StartingDuration + act.ShiftDueToPreviousFeedingBuffers + act.LinkShift,
                             act.StartingUnit
                         },
                         new float[]
                         {
-                            act.StartingDuration + act.DurationDefault  + act.FeedingBuffer + act.LinkShift,
+                            act.StartingDuration + act.DurationDefault  + act.ShiftDueToPreviousFeedingBuffers + act.LinkShift,
                             act.StartingUnit + act.Units
                         }
                     },
@@ -107,7 +107,12 @@ namespace SchedulePath.Models
 
         private List<float[]> ConvertToPoints(List<ActivityWithDirection> path)
         {
-            var points = new List<float[]> { new float[] { path.First().Activity.FromDuration + path.First().LinkShift, 0 } };
+            var points = new List<float[]> {
+                new float[] {
+                    path.First().Activity.FromDuration + path.First().LinkShift,
+                    path.First().Activity.FromUnit
+                }
+            };
 
             foreach (var actWithDir in path)
             {
@@ -120,6 +125,7 @@ namespace SchedulePath.Models
                             actWithDir.FeedingBuffer.TimePeriod +
                             actWithDir.LinkShift,
                             (float)actWithDir.FeedingBuffer.StartingUnit });
+
                     points.Add(new float[] { (float)actWithDir.LinkDistance.StartingDuration +
                     actWithDir.LinkDistance.PreviousFeedingBuffers +
                     actWithDir.LinkDistance.FeedingBuffer +
@@ -130,10 +136,10 @@ namespace SchedulePath.Models
                 else
                 {
                     if (actWithDir.Direction == ActivityDirection.Normal)
-                        points.Add(new float[] { actWithDir.Activity.ToDuration + actWithDir.Activity.FeedingBuffer +
+                        points.Add(new float[] { actWithDir.Activity.ToDuration + actWithDir.Activity.ShiftDueToPreviousFeedingBuffers +
                             actWithDir.Activity.LinkShift, actWithDir.Activity.ToUnit * actWithDir.Activity.Flip });
                     if (actWithDir.Direction == ActivityDirection.Reverse)
-                        points.Add(new float[] { actWithDir.Activity.FromDuration + actWithDir.Activity.FeedingBuffer +
+                        points.Add(new float[] { actWithDir.Activity.FromDuration + actWithDir.Activity.ShiftDueToPreviousFeedingBuffers +
                             actWithDir.Activity.LinkShift, actWithDir.Activity.FromUnit * actWithDir.Activity.Flip });
                 }
             }

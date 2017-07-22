@@ -8,8 +8,11 @@ namespace SchedulePath.Services
 {
     public interface IActivityProcessor
     {
-        Schedule Process(bool withCriticalPath, IEnumerable<Activity> activities, Activity startingPoint);
-        List<List<ActivityWithDirection>> CalculateCriticalPath(IEnumerable<Activity> activities, Activity startingPoint);
+        Schedule Calculate(IEnumerable<Activity> activities);
+        Schedule Process(IEnumerable<Activity> activities, 
+            Activity startingPoint, Activity endingActivity);
+        List<List<ActivityWithDirection>> CalculateCriticalPath(IEnumerable<Activity> activities, 
+            Activity startingPoint, Activity endingActivity);
         CriticalPath GetMaxProjectBuffer(List<List<ActivityWithDirection>> criticalPaths);
     }
 }

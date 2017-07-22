@@ -23,8 +23,8 @@ namespace SchedulePath.Services
 
             if (!activities.Any() || link.UpwardAct == null || link.DownwardAct == null) return;
 
-            var delta = link.UpwardAct.ToDuration + link.UpwardAct.FeedingBuffer +
-                link.TimePeriod - link.DownwardAct.FromDuration - link.DownwardAct.FeedingBuffer;
+            var delta = link.UpwardAct.ToDuration + link.UpwardAct.ShiftDueToPreviousFeedingBuffers +
+                link.TimePeriod - link.DownwardAct.FromDuration - link.DownwardAct.ShiftDueToPreviousFeedingBuffers;
 
             downwardProcessorResult.ShiftSchedule(delta);
 
@@ -35,14 +35,14 @@ namespace SchedulePath.Services
                 FeedingBuffer = new FeedingBuffer
                 {
                     StartingDuration = link.UpwardAct.ToDuration,
-                    Buffer = link.UpwardAct.FeedingBuffer,
+                    Buffer = link.UpwardAct.ShiftDueToPreviousFeedingBuffers,
                     TimePeriod = link.TimePeriod,
                     StartingUnit = link.UpwardAct.ToUnit
                 },
                 LinkDistance = new LinkDistance {
                     StartingDuration = link.UpwardAct.ToDuration,
                     TimePeriod = link.TimePeriod,
-                    FeedingBuffer = link.UpwardAct.FeedingBuffer,
+                    FeedingBuffer = link.UpwardAct.ShiftDueToPreviousFeedingBuffers,
                     StartingUnit = link.DownwardAct.FromUnit
                 },
                 Flip = -1

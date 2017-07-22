@@ -26,28 +26,52 @@ namespace SchedulePath.Services
 
         public GraphConfig Process(bool withCriticalPath)
         {
+            Schedule upperSchedule;
+            Schedule lowerSchedule;
+
             var activities = _repository.GetActivities();
             var link = _repository.GetLink();
 
             var upwardActivities = activities.Where(a => a.Section == ActivitySection.UPWARD);
             var downwardActivities = activities.Where(a => a.Section == ActivitySection.DOWNWARD);
 
-            var downwardStartingActivity = downwardActivities.FirstOrDefault(a => string.IsNullOrEmpty(a.Dependencies));
+            upperSchedule = _activityProcessor.Calculate(upwardActivities);
+            lowerSchedule = _activityProcessor.Calculate(downwardActivities);
 
-            if (withCriticalPath && link !=null && link.DownwardAct != null)
-                downwardStartingActivity = link.DownwardAct;
+            if (withCriticalPath)
+            {
+                var startingUpwardActivity = GetStartingActivity(upwardActivities);
+                var endingUpwardActivity = GetEndingActivity(upwardActivities);
+                var downwardStartingActivity = GetStartingActivity(downwardActivities);
+                var endingDownwardActivity = GetEndingActivity(downwardActivities);
 
-            var upperSectionResult = _activityProcessor.Process(withCriticalPath, upwardActivities,
-                upwardActivities.FirstOrDefault(a => string.IsNullOrEmpty(a.Dependencies)));
-            var lowerSectionResult = _activityProcessor.Process(withCriticalPath, downwardActivities,
-                downwardStartingActivity);
+                if (link != null && link.DownwardAct != null && link.UpwardAct != null)
+                {
+                    endingUpwardActivity = link.UpwardAct;
+                    downwardStartingActivity = link.DownwardAct;
+                }
 
-            if(withCriticalPath && link != null)
-                _linkProcessor.Process(activities, link, ref upperSectionResult, ref lowerSectionResult);
+                upperSchedule = _activityProcessor.Process(upwardActivities, startingUpwardActivity,
+                    endingUpwardActivity);
+                lowerSchedule = _activityProcessor.Process(downwardActivities, downwardStartingActivity,
+                    endingDownwardActivity);
 
-            return _graphProcessor.ProcessGraph(withCriticalPath, upperSectionResult, lowerSectionResult);
+                if (link != null) _linkProcessor.Process(activities, link, ref upperSchedule, ref lowerSchedule);
+            }
+
+            return _graphProcessor.ProcessGraph(withCriticalPath, upperSchedule, lowerSchedule);
         }
-        
+
+        private static Activity GetEndingActivity(IEnumerable<Activity> upwardActivities)
+        {
+            return upwardActivities.First(a => a.ToDuration == upwardActivities.Max(x => x.ToDuration));
+        }
+
+        private static Activity GetStartingActivity(IEnumerable<Activity> upwardActivities)
+        {
+            return upwardActivities.FirstOrDefault(a => string.IsNullOrEmpty(a.Dependencies));
+        }
+
         public IEnumerable<Activity> GetActivities()
         {
             var activities = _repository.GetActivities();

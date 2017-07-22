@@ -41,3 +41,4 @@ docker run -p 4200:4200 schedulecriticality_web
 
 docker build -t schedulecriticality_api .
 docker build -t schedulecriticality_web .
+docker build -t schedulecriticality_sqlinux .

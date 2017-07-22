@@ -83,7 +83,7 @@ namespace SchedulePath.Models
         [NotMapped]
         public int Flip { get; set; }
         [NotMapped]
-        public float FeedingBuffer { get; set; }
+        public float ShiftDueToPreviousFeedingBuffers { get; set; }
         [NotMapped]
         public float LinkShift { get; set; }
         [NotMapped]
@@ -113,7 +113,7 @@ namespace SchedulePath.Models
                 Dependencies = Dependencies,
                 Duration = Duration,
                 DurationFunction = DurationFunction,
-                FeedingBuffer = FeedingBuffer,
+                ShiftDueToPreviousFeedingBuffers = ShiftDueToPreviousFeedingBuffers,
                 Flip = Flip,
                 Id = Id,
                 inputProdRate = inputProdRate,

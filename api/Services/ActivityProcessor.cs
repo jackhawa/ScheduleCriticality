@@ -8,29 +8,32 @@ namespace SchedulePath.Services
 {
     public class ActivityProcessor : IActivityProcessor
     {
-        public Schedule Process(bool withCriticalPath, IEnumerable<Activity> activities, Activity startingPoint)
+        public Schedule Calculate(IEnumerable<Activity> activities)
         {
             if (!activities.Any()) return null;
 
             CalculateActivities(activities);
-
-            if (withCriticalPath)
-            {
-                var criticalPaths = CalculateCriticalPath(activities, startingPoint);
-                var maxCriticalPath = GetMaxProjectBuffer(criticalPaths);
-                var feedingBuffers = CalculateFeedingBuffers(activities, maxCriticalPath);
-
-                return BuildProcessorResult()
-                    .AddActivities(activities)
-                    .AddCriticalPath(maxCriticalPath)
-                    .AddFeedingBuffers(feedingBuffers);
-            }
-
             return BuildProcessorResult()
                     .AddActivities(activities);
         }
 
-        private List<FeedingBuffer> CalculateFeedingBuffers(IEnumerable<Activity> activities, CriticalPath maxCriticalPath)
+        public Schedule Process(IEnumerable<Activity> activities, 
+            Activity startingPoint, Activity endingActivity)
+        {
+            if (!activities.Any()) return null;
+            
+            var criticalPaths = CalculateCriticalPath(activities, startingPoint, endingActivity);
+            var maxCriticalPath = GetMaxProjectBuffer(criticalPaths);
+            var feedingBuffers = CalculateFeedingBuffers(activities, maxCriticalPath, startingPoint, endingActivity);
+
+            return BuildProcessorResult()
+                .AddActivities(activities)
+                .AddCriticalPath(maxCriticalPath)
+                .AddFeedingBuffers(feedingBuffers);
+        }
+        
+        private List<FeedingBuffer> CalculateFeedingBuffers(IEnumerable<Activity> activities, CriticalPath maxCriticalPath,
+            Activity startingActivity, Activity endingActivity)
         {
             var feedingBuffers = new List<FeedingBuffer>();
 
@@ -39,7 +42,13 @@ namespace SchedulePath.Services
             var processFeedingBuffer = new List<KeyValuePair<int, float>>();
             var orderedProcesses = new List<OrderedProcess>();
             var orderedIndex = 0;
-            activities.GroupBy(a => a.ProcessId).OrderBy(g => g.Min(a => a.FromDuration)).ToList()
+            var startDurProcWithStartAct = activities.Where(a => a.ProcessId == startingActivity.ProcessId).Select(x => x.FromDuration).Min();
+            var startDurProcWithEndAct = activities.Where(a => a.ProcessId == endingActivity.ProcessId).Select(x => x.FromDuration).Min();
+
+            activities.GroupBy(a => a.ProcessId)
+                .Where(g => g.Select(x => x.FromDuration).Min() >= startDurProcWithStartAct &&
+                g.Select(x => x.FromDuration).Min() <= startDurProcWithEndAct)
+                .OrderBy(g => g.Min(a => a.FromDuration)).ToList()
                 .ForEach(g => orderedProcesses.Add(new OrderedProcess
                 {
                     order = orderedIndex++,
@@ -64,26 +73,28 @@ namespace SchedulePath.Services
                 if (processFeedingBuffer.Any(pfb => pfb.Key == proc.order - 1))
                 {
                     sumPreviousFbs = processFeedingBuffer.Where(pfb => pfb.Key < proc.order).Sum(r => r.Value);
-                    proc.elements.ToList().ForEach(a => a.FeedingBuffer = sumPreviousFbs);
 
-                    maxCriticalPath.ActivityDirections.Select(ad => ad.Activity).Intersect(proc.elements)
-                        .ToList().ForEach(a => a.FeedingBuffer = sumPreviousFbs);
-                    var link = maxCriticalPath.ActivityDirections.Where(ad => ad.LinkDistance != null).Skip(proc.order)
-                        .FirstOrDefault();
-                    if (link != null)
-                    {
-                        link.FeedingBuffer = new FeedingBuffer
-                        {
-                            StartingDuration = link.LinkDistance.StartingDuration,
-                            PreviousFeedingBuffers = sumPreviousFbs,
-                            Buffer = feedingBuffer,
-                            StartingUnit = criticalActivitiesInProc.Max(a => link.Direction == ActivityDirection.Normal ?
-                            a.StartingUnit + a.Units : a.StartingUnit)
-                        };
-                        link.LinkDistance.PreviousFeedingBuffers = sumPreviousFbs;
-                        link.LinkDistance.FeedingBuffer = feedingBuffer;
-                    }
+                    SetPreviousFeedingBufferShiftingToElements(proc.elements.ToList(), sumPreviousFbs);
+                    SetPreviousFeedingBufferShiftingToElements(maxCriticalPath.ActivityDirections.Select(ad => ad.Activity)
+                        .Intersect(proc.elements).ToList(), sumPreviousFbs);
+
+                    
                 }
+
+                var link = GetLinkInCriticalPathForCurrentProcess(maxCriticalPath, proc);
+                if (link != null)
+                {
+                    link.FeedingBuffer = new FeedingBuffer
+                    {
+                        StartingDuration = link.LinkDistance.StartingDuration,
+                        PreviousFeedingBuffers = sumPreviousFbs,
+                        Buffer = feedingBuffer,
+                        StartingUnit = criticalActivitiesInProc.Max(a => link.Direction == ActivityDirection.Normal ?
+                        a.StartingUnit + a.Units : a.StartingUnit)
+                    };
+                    link.LinkDistance.PreviousFeedingBuffers = sumPreviousFbs;
+                    link.LinkDistance.FeedingBuffer = feedingBuffer;
+                }                
 
                 var maxDuration = proc.elements.Max(a => a.ToDuration);
                 var lastProc = proc.elements.First(a => a.ToDuration == maxDuration);
@@ -104,6 +115,17 @@ namespace SchedulePath.Services
             };
 
             return feedingBuffers;
+        }
+
+        private static ActivityWithDirection GetLinkInCriticalPathForCurrentProcess(CriticalPath maxCriticalPath, OrderedProcess proc)
+        {
+            return maxCriticalPath.ActivityDirections.Where(ad => ad.LinkDistance != null).Skip(proc.order)
+                                    .FirstOrDefault();
+        }
+
+        private static void SetPreviousFeedingBufferShiftingToElements(IList<Activity> elements, float sumPreviousFbs)
+        {
+            elements.ToList().ForEach(a => a.ShiftDueToPreviousFeedingBuffers = sumPreviousFbs);
         }
 
         public CriticalPath GetMaxProjectBuffer(List<List<ActivityWithDirection>> criticalPaths)
@@ -133,21 +155,21 @@ namespace SchedulePath.Services
             return criticalPath;
         }
 
-        public List<List<ActivityWithDirection>> CalculateCriticalPath(IEnumerable<Activity> activities, Activity startingActivity)
+        public List<List<ActivityWithDirection>> CalculateCriticalPath(IEnumerable<Activity> activities, 
+            Activity startingActivity, Activity endingActivity)
         {
             var results = new List<List<ActivityWithDirection>>();
             var tempResults = new List<ActivityWithDirection>();
             var result = "";
             var visited = new Dictionary<int, bool>();
             activities.ToList().ForEach(l => visited.Add(l.Id, false));
-            CalculateCriticalPath(activities, startingActivity, result,
-                activities.Max(a => a.ToDuration), null, visited, tempResults.CloneLists(), results,
-                ActivityDirection.Normal, ActivityDirection.Normal);
+            CalculateCriticalPath(activities, startingActivity, result, endingActivity, null, visited,
+                tempResults.CloneLists(), results, ActivityDirection.Normal, ActivityDirection.Normal);
             return results;
         }
 
         private void CalculateCriticalPath(IEnumerable<Activity> activities, Activity currentAct, string result,
-            double max, float?[] deltaLink, Dictionary<int, bool> visited, List<ActivityWithDirection> tempResults,
+            Activity endingActivity, float?[] deltaLink, Dictionary<int, bool> visited, List<ActivityWithDirection> tempResults,
             List<List<ActivityWithDirection>> results, ActivityDirection direction, ActivityDirection previousDirection)
         {
             if (visited[currentAct.Id]) return;
@@ -166,7 +188,7 @@ namespace SchedulePath.Services
 
             tempResults.Add(new ActivityWithDirection { Activity = currentAct, Direction = direction });
 
-            if (currentAct.ToDuration == max)
+            if (currentAct.Id == endingActivity.Id)
             {
                 results.Add(tempResults);
                 return;
@@ -182,7 +204,7 @@ namespace SchedulePath.Services
                         float?[] dLink = null;
                         if (delta > 0) dLink = new float?[] { next.FromDuration, next.FromUnit };
 
-                        CalculateCriticalPath(activities, next, result, max, dLink,
+                        CalculateCriticalPath(activities, next, result, endingActivity, dLink,
                             visited.ToDictionary(entry => entry.Key, entry => entry.Value),
                             tempResults.CloneLists(), results, ActivityDirection.Normal, ActivityDirection.Normal);
                     }
@@ -196,7 +218,7 @@ namespace SchedulePath.Services
                         float?[] dLink = null;
                         if (delta > 0) dLink = new float?[] { next.ToDuration, next.ToUnit };
 
-                        CalculateCriticalPath(activities, next, result, max, dLink,
+                        CalculateCriticalPath(activities, next, result, endingActivity, dLink,
                             visited.ToDictionary(entry => entry.Key, entry => entry.Value),
                             tempResults.CloneLists(), results, ActivityDirection.Reverse, ActivityDirection.Normal);
                     }
@@ -213,7 +235,7 @@ namespace SchedulePath.Services
                         float?[] dLink = null;
                         if (delta > 0) dLink = new float?[] { next.FromDuration, next.FromUnit };
 
-                        CalculateCriticalPath(activities, next, result, max, dLink,
+                        CalculateCriticalPath(activities, next, result, endingActivity, dLink,
                             visited.ToDictionary(entry => entry.Key, entry => entry.Value),
                             tempResults.CloneLists(), results, ActivityDirection.Normal, ActivityDirection.Reverse);
                     }
@@ -228,7 +250,7 @@ namespace SchedulePath.Services
                         float?[] dLink = null;
                         if (delta > 0) dLink = new float?[] { next.FromDuration, next.FromUnit };
 
-                        CalculateCriticalPath(activities, next, result, max, dLink,
+                        CalculateCriticalPath(activities, next, result, endingActivity, dLink,
                             visited.ToDictionary(entry => entry.Key, entry => entry.Value),
                             tempResults.CloneLists(), results, ActivityDirection.Reverse, ActivityDirection.Reverse);
                     }
