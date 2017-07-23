@@ -95,8 +95,8 @@ SET IDENTITY_INSERT [dbo].[Links] OFF
 SET IDENTITY_INSERT [dbo].[Processes] ON 
 
 INSERT [dbo].[Processes] ([Id], [Name]) VALUES (4, N'Walls')
-INSERT [dbo].[Processes] ([Id], [Name]) VALUES (5, N'Floor')
-INSERT [dbo].[Processes] ([Id], [Name]) VALUES (7, N'Ceiling')
-INSERT [dbo].[Processes] ([Id], [Name]) VALUES (8, N'Windows')
+INSERT [dbo].[Processes] ([Id], [Name]) VALUES (5, N'Foundation')
+INSERT [dbo].[Processes] ([Id], [Name]) VALUES (7, N'Slabs')
+INSERT [dbo].[Processes] ([Id], [Name]) VALUES (8, N'Concrete')
 INSERT [dbo].[Processes] ([Id], [Name]) VALUES (9, N'Roof')
 SET IDENTITY_INSERT [dbo].[Processes] OFF
