@@ -36,9 +36,21 @@ netsh interface portproxy add v4tov4 listenaddress=127.0.0.1 listenport=5000 con
 netsh interface portproxy add v4tov4 listenaddress=127.0.0.1 listenport=4200 connectaddress=192.168.99.100 connectport=4200
 
 docker run -p 1433:1433 schedulecriticality_sqlinux
-docker run -p 5000:5000 schedulecriticality_api
+docker run -p 5000:5000 -e ASPNETCORE_ENVIRONMENT='Local' schedulecriticality_api
 docker run -p 4200:4200 schedulecriticality_web
 
 docker build -t schedulecriticality_api .
 docker build -t schedulecriticality_web .
 docker build -t schedulecriticality_sqlinux .
+
+DEPLOYMENT WEB: 
+ng build --prod
+Copy everything from .dist folder to server folder.
+OR
+npm install http-server -g
+http-server ./dist
+
+DEPLOYMENT API:
+dotnet publish
+cd bin\debug\netcoreapp1.0\publish
+dotnet YourProject.dll

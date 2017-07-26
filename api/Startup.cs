@@ -24,7 +24,7 @@ namespace SchedulePath
 
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json")
+                .AddJsonFile("appsettings.Local.json")
                 .AddEnvironmentVariables();            
 
             if (env.IsEnvironment("Development"))
