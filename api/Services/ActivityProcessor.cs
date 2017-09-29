@@ -196,7 +196,7 @@ namespace SchedulePath.Services
 
             if (direction == ActivityDirection.Normal)
             {
-                foreach (var next in activities.Where(l => currentAct.ToDuration == l.FromDuration))
+                foreach (var next in activities.Where(l => Math.Abs(currentAct.ToDuration - l.FromDuration) < 0.02))
                 {
                     var delta = currentAct.ToUnit - next.FromUnit;
                     if (delta >= 0 && !visited[next.Id])
@@ -210,7 +210,7 @@ namespace SchedulePath.Services
                     }
                 }
 
-                foreach (var next in activities.Where(l => currentAct.ToDuration == l.ToDuration))
+                foreach (var next in activities.Where(l => Math.Abs(currentAct.ToDuration - l.ToDuration) < 0.02))
                 {
                     var delta = currentAct.ToUnit - next.ToUnit;
                     if (delta >= 0 && !visited[next.Id])
@@ -227,7 +227,7 @@ namespace SchedulePath.Services
 
             if (direction == ActivityDirection.Reverse)
             {
-                foreach (var next in activities.Where(l => currentAct.FromDuration == l.FromDuration))
+                foreach (var next in activities.Where(l => Math.Abs(currentAct.FromDuration - l.FromDuration) < 0.02))
                 {
                     var delta = currentAct.FromUnit - next.FromUnit;
                     if (delta >= 0 && !visited[next.Id])
@@ -241,7 +241,7 @@ namespace SchedulePath.Services
                     }
                 }
 
-                foreach (var next in activities.Where(l => currentAct.FromDuration == l.ToDuration))
+                foreach (var next in activities.Where(l => Math.Abs(currentAct.FromDuration - l.ToDuration) < 0.02))
                 {
                     var delta = currentAct.FromUnit - next.ToUnit;
                     if (delta >= 0 && !visited[next.Id])
