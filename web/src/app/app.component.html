@@ -1,4 +1,4 @@
-<md-toolbar>Linear-Based Schedule estimation</md-toolbar>
+<md-toolbar>Mod Scheduler</md-toolbar>
 <md-tab-group>
   <md-tab label="Upward Activities">
     <md-toolbar class="button-toolbar">
@@ -13,7 +13,7 @@
           {{value}}
         </template>
       </ngx-datatable-column>
-      <ngx-datatable-column name="Units">
+      <ngx-datatable-column name="Quantity" prop="units">
         <template ngx-datatable-cell-template let-value="value">
           {{value}}
         </template>
@@ -43,7 +43,7 @@
           {{value}}
         </template>
       </ngx-datatable-column>
-      <ngx-datatable-column name="Unit Delta" prop="unitDelta">
+      <ngx-datatable-column name="Quantity Delta" prop="unitDelta">
         <template ngx-datatable-cell-template let-value="value">
           {{value}}
         </template>
@@ -79,7 +79,7 @@
           {{value}}
         </template>
       </ngx-datatable-column>
-      <ngx-datatable-column name="Units">
+      <ngx-datatable-column name="Quantity" prop="units">
         <template ngx-datatable-cell-template let-value="value">
           {{value}}
         </template>
@@ -109,7 +109,7 @@
           {{value}}
         </template>
       </ngx-datatable-column>
-      <ngx-datatable-column name="Unit Delta" prop="unitDelta">
+      <ngx-datatable-column name="Quantity Delta" prop="unitDelta">
         <template ngx-datatable-cell-template let-value="value">
           {{value}}
         </template>
@@ -153,18 +153,19 @@
       <button (click)="updateLink()" md-raised-button>Update</button>
     </md-toolbar>
     <div class="form-container">
-      <md-select placeholder="Upward Activity" [ngModel]="upwardActivity" (ngModelChange)="upwardActivity = $event" name="upwardActivity"
+      <md-select placeholder="Upward Activity" [ngModel]="linkActivities.upwardAct" (ngModelChange)="linkActivities.upwardAct = $event" name="upwardActivity"
         required>
         <md-option *ngFor="let act of activities" [value]="act.id">{{ act.name }}</md-option>
       </md-select>
-      <md-select placeholder="Downward Activity" [ngModel]="downwardActivity" (ngModelChange)="downwardActivity = $event" name="downwardActivity"
+      <md-select placeholder="Downward Activity" [ngModel]="linkActivities.downwardAct" (ngModelChange)="linkActivities.downwardAct = $event" name="downwardActivity"
       required>
         <md-option *ngFor="let act of downwardActivities" [value]="act.id">{{ act.name }}</md-option>
       </md-select>
       <md-input-container>
-        <input md-input placeholder="Time Period" [ngModel]="timePeriod" (ngModelChange)="timePeriod = $event" name="timePeriod"
+        <input md-input placeholder="Time Period" [ngModel]="linkActivities.timePeriod" (ngModelChange)="linkActivities.timePeriod = $event" name="timePeriod"
           required>
       </md-input-container>
+      <md-progress-spinner *ngIf="!linkActivities.upwardAct" mode="indeterminate"></md-progress-spinner>
     </div>
   </md-tab>
   <md-tab label="Graph">

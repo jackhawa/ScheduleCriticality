@@ -1,3 +1,5 @@
-export const environment = {
-  production: true
-};
+export function environment() {
+  return {
+    production: true
+  };
+}

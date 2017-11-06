@@ -44,13 +44,14 @@ docker build -t schedulecriticality_web .
 docker build -t schedulecriticality_sqlinux .
 
 DEPLOYMENT WEB: 
-ng build --prod
+ng build --env=prod
 Copy everything from .dist folder to server folder.
 OR
 npm install http-server -g
 http-server ./dist
 
 DEPLOYMENT API:
+dotnet build
 dotnet publish
 cd bin\debug\netcoreapp1.0\publish
 dotnet YourProject.dll

@@ -69,7 +69,7 @@ namespace SchedulePath
         {
             app.UseCors(builder =>
             {
-                builder.WithOrigins("http://localhost:4200")
+                builder.WithOrigins("http://localhost:8080", "http://localhost:3000", "http://localhost:4200")
                        .WithMethods("GET", "POST", "PUT", "DELETE")
                        .AllowAnyHeader();
             });

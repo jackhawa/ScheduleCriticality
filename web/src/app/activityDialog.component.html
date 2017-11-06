@@ -5,7 +5,7 @@
             <input md-input placeholder="Name" [ngModel]="name" (ngModelChange)="name = $event" required name="name">
         </md-input-container>
         <md-input-container>
-            <input md-input placeholder="Units" [(ngModel)]="units" required name="units">
+            <input md-input placeholder="Quantity" [(ngModel)]="units" required name="units">
         </md-input-container>
         <md-slide-toggle [ngModel]="inputProdRate" (ngModelChange)="inputProdRate = $event" required name="inputProdRate">Input Productive Rates</md-slide-toggle>
         <md-input-container *ngIf="inputProdRate === true">
@@ -29,7 +29,7 @@
                 name="startToFinish">
         </md-input-container>
         <md-input-container>
-            <input md-input placeholder="Unit Delta" [ngModel]="unitDelta" (ngModelChange)="unitDelta = $event" required name="unitDelta">
+            <input md-input placeholder="Quantity Delta" [ngModel]="unitDelta" (ngModelChange)="unitDelta = $event" required name="unitDelta">
         </md-input-container>
         <md-select placeholder="Process" [(ngModel)]="processSelected" name="processSelected" (ngModelChange)="processSelected = $event">
             <md-option *ngFor="let p of processes" [value]="p.key">

@@ -6,7 +6,6 @@ import { ProcessDialogService } from '../processDialog/processDialog.service';
 import { ActivityDialog } from './activityDialog.component';
 import { ProcessDialog } from '../processDialog/processDialog.component';
 import { MdDialogRef } from '@angular/material';
-import { ErrorDialog } from '../errorDialog/errorDialog.component';
 
 @Component({
     selector: 'app-root',
@@ -30,8 +29,7 @@ export class AppComponent {
     selectedActivity: Activity;
     selectedDownwardActivity: Activity;
     selectedProcess: Process;
-    upwardActivity: string;
-    downwardActivity: string;
+    linkActivities: any;
     timePeriod: number;
 
     constructor(private httpService: HttpService,
@@ -40,6 +38,7 @@ export class AppComponent {
         private viewContainerRef: ViewContainerRef,
         public dialog: MdDialog) {
         this.selectedActivity = null;
+        this.linkActivities = {};
     }
 
     onSelect({ selected }) {
@@ -190,9 +189,11 @@ export class AppComponent {
         this.httpService.getLink()
             .subscribe(link => {
                 if (link != null) {
-                    this.upwardActivity = link.upwardActivity;
-                    this.downwardActivity = link.downwardActivity;
-                    this.timePeriod = link.timePeriod;
+                    this.linkActivities = {
+                        upwardAct: link.upwardAct.id,
+                        downwardAct: link.downwardAct.id,
+                        timePeriod: link.timePeriod
+                    };
                 }
             },
             error => alert(error))
@@ -200,10 +201,11 @@ export class AppComponent {
 
     updateLink() {
         this.httpService.updateLink({
-            upwardActivity: this.upwardActivity,
-            downwardActivity: this.downwardActivity,
-            timePeriod: this.timePeriod
-        }).subscribe();
+            upwardActivity: this.linkActivities.upwardAct,
+            downwardActivity: this.linkActivities.downwardAct,
+            timePeriod: this.linkActivities.timePeriod
+        }).subscribe(() => this.getLink());
+        this.linkActivities = {};
     }
 
     ngOnInit() {

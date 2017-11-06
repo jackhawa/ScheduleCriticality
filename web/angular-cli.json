@@ -19,9 +19,7 @@
       "mobile": false,
       "styles": [
         "styles.css",
-        "../node_modules/@swimlane/ngx-datatable/release/components/datatable.component.css",
-        "../node_modules/@swimlane/ngx-datatable/release/index.css",
-        "../node_modules/@swimlane/ngx-datatable/release/assets/icons.css"
+        "../node_modules/@swimlane/ngx-datatable/src/components/datatable.component.scss"
       ],
       "environmentSource": "environments/environment.ts",
       "environments": {
