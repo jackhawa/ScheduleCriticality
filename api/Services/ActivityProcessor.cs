@@ -22,8 +22,11 @@ namespace SchedulePath.Services
         {
             if (!activities.Any()) return null;
             
-            var criticalPaths = CalculateCriticalPath(activities, startingPoint, endingActivity);
-            var maxCriticalPath = GetMaxProjectBuffer(criticalPaths);
+            var criticalPaths = CalculateCriticalPath(activities, startingPoint, endingActivity, ActivityDirection.Normal);
+			if(!criticalPaths.Any())
+				criticalPaths.AddRange(CalculateCriticalPath(activities, startingPoint, endingActivity, ActivityDirection.Reverse));
+
+			var maxCriticalPath = GetMaxProjectBuffer(criticalPaths);
             var feedingBuffers = CalculateFeedingBuffers(activities, maxCriticalPath, startingPoint, endingActivity);
 
             return BuildProcessorResult()
@@ -156,7 +159,7 @@ namespace SchedulePath.Services
         }
 
         public List<List<ActivityWithDirection>> CalculateCriticalPath(IEnumerable<Activity> activities, 
-            Activity startingActivity, Activity endingActivity)
+            Activity startingActivity, Activity endingActivity, ActivityDirection direction)
         {
             var results = new List<List<ActivityWithDirection>>();
             var tempResults = new List<ActivityWithDirection>();
@@ -164,7 +167,7 @@ namespace SchedulePath.Services
             var visited = new Dictionary<int, bool>();
             activities.ToList().ForEach(l => visited.Add(l.Id, false));
             CalculateCriticalPath(activities, startingActivity, result, endingActivity, null, visited,
-                tempResults.CloneLists(), results, ActivityDirection.Normal, ActivityDirection.Normal);
+                tempResults.CloneLists(), results, direction, ActivityDirection.Normal);
             return results;
         }
 

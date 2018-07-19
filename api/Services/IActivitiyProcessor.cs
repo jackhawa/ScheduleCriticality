@@ -12,7 +12,7 @@ namespace SchedulePath.Services
         Schedule Process(IEnumerable<Activity> activities, 
             Activity startingPoint, Activity endingActivity);
         List<List<ActivityWithDirection>> CalculateCriticalPath(IEnumerable<Activity> activities, 
-            Activity startingPoint, Activity endingActivity);
+            Activity startingPoint, Activity endingActivity, ActivityDirection direction);
         CriticalPath GetMaxProjectBuffer(List<List<ActivityWithDirection>> criticalPaths);
     }
 }

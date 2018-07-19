@@ -1,6 +1,6 @@
 <md-toolbar>Mod Scheduler</md-toolbar>
 <md-tab-group>
-  <md-tab label="Upward Activities">
+  <md-tab label="Offsite Activities">
     <md-toolbar class="button-toolbar">
       <button (click)="executeActivity(null, 'UPWARD')" md-raised-button>Add Activity</button>
       <button [disabled]="!selectedActivity" (click)="executeActivity(selectedActivity, 'UPWARD')" md-raised-button>Update Activity</button>
@@ -66,7 +66,7 @@
     </ngx-datatable>
     <md-progress-spinner *ngIf="!activities" mode="indeterminate"></md-progress-spinner>
   </md-tab>
-  <md-tab label="Downward Activities">
+  <md-tab label="OnSite Activities">
     <md-toolbar class="button-toolbar">
       <button (click)="executeActivity(null, 'DOWNWARD')" md-raised-button>Add Activity</button>
       <button [disabled]="!selectedDownwardActivity" (click)="executeActivity(selectedDownwardActivity,'DOWNWARD')" md-raised-button>Update Activity</button>
@@ -153,11 +153,11 @@
       <button (click)="updateLink()" md-raised-button>Update</button>
     </md-toolbar>
     <div class="form-container">
-      <md-select placeholder="Upward Activity" [ngModel]="linkActivities.upwardAct" (ngModelChange)="linkActivities.upwardAct = $event" name="upwardActivity"
+      <md-select placeholder="Offsite Activity" [ngModel]="linkActivities.upwardAct" (ngModelChange)="linkActivities.upwardAct = $event" name="upwardActivity"
         required>
         <md-option *ngFor="let act of activities" [value]="act.id">{{ act.name }}</md-option>
       </md-select>
-      <md-select placeholder="Downward Activity" [ngModel]="linkActivities.downwardAct" (ngModelChange)="linkActivities.downwardAct = $event" name="downwardActivity"
+      <md-select placeholder="OnSite Activity" [ngModel]="linkActivities.downwardAct" (ngModelChange)="linkActivities.downwardAct = $event" name="downwardActivity"
       required>
         <md-option *ngFor="let act of downwardActivities" [value]="act.id">{{ act.name }}</md-option>
       </md-select>
@@ -172,6 +172,6 @@
     <md-toolbar class="button-toolbar">
       <button (click)="getGraph(true)" md-raised-button>Add Critical Path</button>
     </md-toolbar>
-    <chart [options]="graphConfig" style="height:500px; width:1200px;"></chart>
+    <chart [options]="graphConfig"></chart>
   </md-tab>
 </md-tab-group>

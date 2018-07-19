@@ -180,7 +180,10 @@ export class AppComponent {
     getGraph(withCriticalPath) {
         this.httpService.getGraph(withCriticalPath)
             .subscribe(
-            graphConfig => this.graphConfig = graphConfig,
+            graphConfig => {
+                graphConfig.chart.width = '1200';
+                this.graphConfig = graphConfig;
+            },
             error => alert(error)
             );
     }
